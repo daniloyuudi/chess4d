@@ -1,7 +1,7 @@
 local Images = {}
 
 function Images:new()
-	o = {}
+	local o = {}
 	setmetatable(o, self)
 	self.__index = self
 	o:loadAll()
