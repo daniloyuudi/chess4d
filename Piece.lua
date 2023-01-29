@@ -16,7 +16,7 @@ function Piece:loadImage()
 	elseif self.type == "rook" then
 		self.image = images:getRook(self.side)
 	elseif self.type == "pawn" then
-		self.image = images:getRook(self.side)
+		self.image = images:getPawn(self.side)
 	end
 end
 

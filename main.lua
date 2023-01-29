@@ -7,12 +7,12 @@ function love.load()
 	love.window.setMode(600, 600)
 
 	board = Board:new()
-	king = Piece:new("white", "king")
-	bishop = Piece:new("black", "bishop")
+	--king = Piece:new("white", "king")
+	--bishop = Piece:new("black", "bishop")
 end
 
 function love.draw()
 	board:draw()
-	king:draw(75, 75)
-	bishop:draw(75*4, 75*1)
+	--king:draw(75, 75)
+	--bishop:draw(75*4, 75*1)
 end
