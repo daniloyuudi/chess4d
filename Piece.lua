@@ -1,6 +1,6 @@
 local Images = require("Images")
 
-Piece = {}
+local Piece = {}
 
 function Piece:loadImage()
 	local images = Images:new()
