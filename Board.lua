@@ -22,6 +22,9 @@ function Board:loadNewGame()
 		self.pieces[i][2] = Piece:new("black", "pawn")
 	end
 
+	self.pieces[1][6] = Piece:new("black", "pawn")
+	self.pieces[2][5] = Piece:new("black", "pawn")
+
 	self.pieces[1][8] = Piece:new("white", "rook")
 	self.pieces[2][8] = Piece:new("white", "knight")
 	self.pieces[3][8] = Piece:new("white", "bishop")
@@ -48,6 +51,9 @@ end
 function Board:hasPiece(color, x, y)
 	local piece = self.pieces[x][y]
 	if piece ~= nil then
+		if color == "any" then
+			return true
+		end
 		if piece:getColor() == color then
 			return true
 		end
@@ -58,6 +64,57 @@ end
 function Board:movePiece(x1, y1, x2, y2)
 	self.pieces[x2][y2] = self.pieces[x1][y1]
 	self.pieces[x1][y1] = nil
+end
+
+function Board:getPawnMoves(x, y)
+	local moves = {}
+	-- capture left
+	if x > 1 then
+		if self:hasPiece("black", x-1, y-1) then
+			table.insert(moves, {x-1, y-1})
+		end
+	end
+	-- capture right
+	if x < 8 then
+		if self:hasPiece("black", x+1, y-1) then
+			table.insert(moves, {x+1, y-1})
+		end
+	end
+	-- move forward
+	if not self:hasPiece("any", x, y-1) then
+		table.insert(moves, {x, y-1})
+	end
+	-- opening move
+	if y == 7 and not self:hasPiece("any", x, y-1) then
+		if not self:hasPiece("black", x, y-2) then
+			table.insert(moves, {x, y-2})
+		end
+	end
+	return moves
+end
+
+function Board:hasMove(moves, x, y)
+	for _, v in ipairs(moves) do
+		if v[1] == x and v[2] == y then
+			return true
+		end
+	end
+	return false
+end
+
+function Board:checkMove(x1, y1, x2, y2)
+	local piece = self.pieces[x1][y1]
+	if piece ~= nil then
+		local type = piece:getType()
+		if type == "pawn" then
+			local moves = self:getPawnMoves(x1, y1)
+			if self:hasMove(moves, x2, y2) then
+				return true
+			end
+			return false
+		end
+		return true
+	end
 end
 
 function Board:alternateColor()

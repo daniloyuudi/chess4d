@@ -25,7 +25,6 @@ end
 function Match:update()
 	if self.turn == "white" then
 		if self.mouse:checkPressed() then
-			print("clicked mouse")
 			if not self.selected then
 				local quadX, quadY = self:getClickedQuad()
 				if self.board:hasPiece("white", quadX, quadY) then
@@ -34,8 +33,9 @@ function Match:update()
 				end
 			else
 				local quadX, quadY = self:getClickedQuad()
-				-- verify if move is possible
-				self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
+				if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
+					self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
+				end
 				self.selected = false
 			end
 		end
