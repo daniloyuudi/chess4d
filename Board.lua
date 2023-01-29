@@ -45,6 +45,21 @@ function Board:new()
 	return o
 end
 
+function Board:hasPiece(color, x, y)
+	local piece = self.pieces[x][y]
+	if piece ~= nil then
+		if piece:getColor() == color then
+			return true
+		end
+	end
+	return false
+end
+
+function Board:movePiece(x1, y1, x2, y2)
+	self.pieces[x2][y2] = self.pieces[x1][y1]
+	self.pieces[x1][y1] = nil
+end
+
 function Board:alternateColor()
 	if self.quadColor == "white" then
 		self.quadColor = "black"
