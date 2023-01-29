@@ -1,10 +1,11 @@
 local Images = {}
 
+local instance
+
 function Images:new()
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
-	o:loadAll()
 	return o
 end
 
@@ -32,6 +33,13 @@ function Images:loadAll()
 
 	self:loadBlack()
 	self:loadWhite()
+end
+
+function Images:getInstance()
+	if instance == nil then
+		instance = self:new()
+	end
+	return instance
 end
 
 function Images:getKing(side)

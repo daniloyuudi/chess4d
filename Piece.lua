@@ -3,7 +3,7 @@ local Images = require("Images")
 local Piece = {}
 
 function Piece:loadImage()
-	local images = Images:new()
+	local images = Images:getInstance()
 
 	if self.type == "king" then
 		self.image = images:getKing(self.color)

@@ -7,6 +7,9 @@ function love.load()
 	love.graphics.setBackgroundColor(0.5, 0.5, 0.5, 1)
 	love.window.setMode(600, 600)
 
+	local images = Images:getInstance()
+	images:loadAll()
+
 	match = Match:new()
 end
 
