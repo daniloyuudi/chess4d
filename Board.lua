@@ -24,7 +24,7 @@ function Board:loadNewGame()
 
 	self.pieces[1][6] = Piece:new("black", "pawn")
 	self.pieces[2][5] = Piece:new("black", "pawn")
-	self.pieces[4][4] = Piece:new("white", "queen")
+	self.pieces[4][4] = Piece:new("white", "knight")
 
 	self.pieces[1][8] = Piece:new("white", "rook")
 	self.pieces[2][8] = Piece:new("white", "knight")
@@ -358,6 +358,59 @@ function Board:getQueenMoves(x, y)
 	return moves
 end
 
+function Board:getKnightMoves(x, y)
+	local moves = {}
+	-- move left then up
+	if x > 2 and y > 1 then
+		if not self:hasPiece("white", x-2, y-1) then
+			table.insert(moves, {x-2,y-1})
+		end
+	end
+	-- move up then left
+	if x > 1 and y > 2 then
+		if not self:hasPiece("white", x-1, y-2) then
+			table.insert(moves, {x-1,y-2})
+		end
+	end
+	-- move up then right
+	if x < 8 and y > 2 then
+		if not self:hasPiece("white", x+1, y-2) then
+			table.insert(moves, {x+1, y-2})
+		end
+	end
+	-- move right then up
+	if x < 7 and y > 1 then
+		if not self:hasPiece("white", x+2, y-1) then
+			table.insert(moves, {x+2, y-1})
+		end
+	end
+	-- move right then down
+	if x < 7 and y < 8 then
+		if not self:hasPiece("white", x+2, y+1) then
+			table.insert(moves, {x+2, y+1})
+		end
+	end
+	-- move down then right
+	if x < 8 and y < 7 then
+		if not self:hasPiece("white", x+1, y+2) then
+			table.insert(moves, {x+1, y+2})
+		end
+	end
+	-- move down then left
+	if x > 1 and y < 7 then
+		if not self:hasPiece("white", x-1, y+2) then
+			table.insert(moves, {x-1, y+2})
+		end
+	end
+	-- move left then down
+	if x > 2 and y < 8 then
+		if not self:hasPiece("white", x-2, y+1) then
+			table.insert(moves, {x-2, y+1})
+		end
+	end
+	return moves
+end
+
 function Board:hasMove(moves, x, y)
 	for _, v in ipairs(moves) do
 		if v[1] == x and v[2] == y then
@@ -401,6 +454,13 @@ function Board:checkMove(x1, y1, x2, y2)
 		end
 		if type == "queen" then
 			local moves = self:getQueenMoves(x1, y1)
+			if self:hasMove(moves, x2, y2) then
+				return true
+			end
+			return false
+		end
+		if type == "knight" then
+			local moves = self:getKnightMoves(x1, y1)
 			if self:hasMove(moves, x2, y2) then
 				return true
 			end
