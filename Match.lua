@@ -1,5 +1,6 @@
 local Mouse = require("Mouse")
 local Board = require("Board")
+local BoardDrawer = require("BoardDrawer")
 
 local Match = {}
 
@@ -13,6 +14,7 @@ function Match:new()
 	o.selectedY = 0
 	o.mouse = Mouse:new()
 	o.board = Board:new()
+	o.boardDrawer = BoardDrawer:new(o.board)
 	return o
 end
 
@@ -45,7 +47,7 @@ function Match:update()
 end
 
 function Match:draw()
-	self.board:draw()
+	self.boardDrawer:draw()
 end
 
 return Match

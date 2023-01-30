@@ -510,7 +510,11 @@ function Board:checkMove(x1, y1, x2, y2)
 	end
 end
 
-function Board:alternateColor()
+function Board:getSprites()
+	return self.sprites
+end
+
+--[[function Board:alternateColor()
 	if self.quadColor == "white" then
 		self.quadColor = "black"
 		love.graphics.setColor(0.5, 0.5, 0.5, 1)
@@ -518,9 +522,9 @@ function Board:alternateColor()
 		self.quadColor = "white"
 		love.graphics.setColor(1, 1, 1, 1)
 	end
-end
+end]]
 
-function Board:drawBoard()
+--[[function Board:drawBoard()
 	for i=1, 8 do
 		for j=1, 8 do
 			love.graphics.rectangle("fill", 75*(i-1), 75*(j-1), 75, 75)
@@ -529,20 +533,20 @@ function Board:drawBoard()
 			end
 		end
 	end
-end
+end]]
 
-function Board:drawPieces()
+--[[function Board:drawPieces()
 	local pointer = self.sprites
 	while pointer ~= nil do
 		pointer:draw()
 		pointer = pointer:getNext()
 	end
-end
+end]]
 
-function Board:draw()
+--[[function Board:draw()
 	self:drawBoard()
 	self:drawPieces()
-end
+end]]
 
 return Board
 
