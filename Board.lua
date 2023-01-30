@@ -98,7 +98,6 @@ function Board:movePiece(x1, y1, x2, y2)
 	self.pieces[x1][y1] = nil
 	-- remove sprite in new position first
 	local targetSprite = self:searchSprite(x2, y2)
-	print(targetSprite)
 	if targetSprite ~= nil then
 		self:removeSprite(targetSprite)
 	end
@@ -512,6 +511,10 @@ end
 
 function Board:getSprites()
 	return self.sprites
+end
+
+function Board:getMatrix()
+	return self.pieces
 end
 
 --[[function Board:alternateColor()

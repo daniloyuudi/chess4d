@@ -8,6 +8,8 @@ function love.load()
 	love.window.setMode(600, 600)
 	love.window.setTitle("Chess 4D")
 
+	math.randomseed(1)
+
 	-- load all images at once
 	local images = Images:getInstance()
 	images:loadAll()

@@ -1,6 +1,7 @@
 local Mouse = require("Mouse")
 local Board = require("Board")
 local BoardDrawer = require("BoardDrawer")
+local AI = require("AI")
 
 local Match = {}
 
@@ -15,6 +16,7 @@ function Match:new()
 	o.mouse = Mouse:new()
 	o.board = Board:new()
 	o.boardDrawer = BoardDrawer:new(o.board)
+	o.ai = AI:new()
 	return o
 end
 
@@ -37,12 +39,18 @@ function Match:update()
 				local quadX, quadY = self:getClickedQuad()
 				if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
 					self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
+					self.turn = "black"
 				end
 				self.selected = false
 			end
 		end
 	else
-		-- ai turn
+		local currentBoard = self.board:getMatrix()
+		self.ai:setBoardMatrix(currentBoard)
+		local originX, originY, destinationX, destinationY = self.ai:getNextMove()
+		print("position:", originX, originY, destinationX, destinationY)
+		self.board:movePiece(originX, originY, destinationX, destinationY)
+		self.turn = "white"
 	end
 end
 
