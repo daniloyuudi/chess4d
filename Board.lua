@@ -24,6 +24,7 @@ function Board:loadNewGame()
 
 	self.pieces[1][6] = Piece:new("black", "pawn")
 	self.pieces[2][5] = Piece:new("black", "pawn")
+	self.pieces[4][4] = Piece:new("white", "bishop")
 
 	self.pieces[1][8] = Piece:new("white", "rook")
 	self.pieces[2][8] = Piece:new("white", "knight")
@@ -93,6 +94,116 @@ function Board:getPawnMoves(x, y)
 	return moves
 end
 
+function Board:getRookMoves(x, y)
+	local quadsLeft = x-1
+	local quadsRight = 8-x
+	local quadsUp = y-1
+	local quadsDown = 8-y
+	local moves = {}
+	-- move right
+	for i = 1, quadsRight do
+		if self:hasPiece("white", x+i, y) then
+			break
+		end
+		if self:hasPiece("black", x+i, y) then
+			table.insert(moves, {x+i, y})
+			break
+		end
+		table.insert(moves, {x+i, y})
+	end
+	-- move up
+	for i = 1, quadsUp do
+		if self:hasPiece("white", x, y-i) then
+			break
+		end
+		if self:hasPiece("black", x, y-i) then
+			table.insert(moves, {x,y-i})
+			break
+		end
+		table.insert(moves, {x,y-i})
+	end
+	-- move left
+	for i = 1, quadsLeft do
+		if self:hasPiece("white", x-i, y) then
+			break
+		end
+		if self:hasPiece("black", x-i, y) then
+			table.insert(moves, {x-i, y})
+			break
+		end
+		table.insert(moves, {x-i, y})
+	end
+	-- move down
+	for i = 1, quadsDown do
+		if self:hasPiece("white", x, y+i) then
+			break
+		end
+		if self:hasPiece("black", x, y+i) then
+			table.insert(moves, {x,y+i})
+			break
+		end
+		table.insert(moves, {x, y+i})
+	end
+	return moves
+end
+
+function Board:getBishopMoves(x, y)
+	local quadsLeft = x-1
+	local quadsRight = 8-x
+	local quadsUp = y-1
+	local quadsDown = 8-y
+	local quadsLeftUp = math.min(quadsLeft, quadsUp)
+	local quadsRightUp = math.min(quadsRight, quadsUp)
+	local quadsRightDown = math.min(quadsRight, quadsDown)
+	local quadsLeftDown = math.min(quadsLeft, quadsDown)
+	local moves = {}
+	-- move left-up
+	for i = 1, quadsLeftUp do
+		if self:hasPiece("white", x-i, y-i) then
+			break
+		end
+		if self:hasPiece("black", x-i, y-i) then
+			table.insert(moves, {x-i,y-i})
+			break
+		end
+		table.insert(moves, {x-i,y-i})
+	end
+	-- move right-up
+	for i = 1, quadsRightUp do
+		if self:hasPiece("white", x+i, y-i) then
+			break
+		end
+		if self:hasPiece("black", x+i, y-i) then
+			table.insert(moves, {x+i,y-i})
+			break
+		end
+		table.insert(moves, {x+i,y-i})
+	end
+	-- move right-down
+	for i = 1, quadsRightDown do
+		if self:hasPiece("white", x+i, y+i) then
+			break
+		end
+		if self:hasPiece("black", x+i, y+i) then
+			table.insert(moves, {x+i,y+i})
+			break
+		end
+		table.insert(moves, {x+i,y+i})
+	end
+	-- move left-down
+	for i = 1, quadsLeftDown do
+		if self:hasPiece("white", x-i, y+i) then
+			break
+		end
+		if self:hasPiece("black", x-i, y+i) then
+			table.insert(moves, {x-i,y+i})
+			break
+		end
+		table.insert(moves, {x-i,y+i})
+	end
+	return moves
+end
+
 function Board:hasMove(moves, x, y)
 	for _, v in ipairs(moves) do
 		if v[1] == x and v[2] == y then
@@ -108,6 +219,20 @@ function Board:checkMove(x1, y1, x2, y2)
 		local type = piece:getType()
 		if type == "pawn" then
 			local moves = self:getPawnMoves(x1, y1)
+			if self:hasMove(moves, x2, y2) then
+				return true
+			end
+			return false
+		end
+		if type == "rook" then
+			local moves = self:getRookMoves(x1, y1)
+			if self:hasMove(moves, x2, y2) then
+				return true
+			end
+			return false
+		end
+		if type == "bishop" then
+			local moves = self:getBishopMoves(x1, y1)
 			if self:hasMove(moves, x2, y2) then
 				return true
 			end
