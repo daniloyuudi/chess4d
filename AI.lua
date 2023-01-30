@@ -438,6 +438,79 @@ function AI:selectRandomMove(array)
 	return array[randomNumber]
 end
 
+function AI:getPieceValue(piece)
+	local type = piece:getType()
+	local color = piece:getColor()
+	if color == "black" then
+		if type == "pawn" then
+			return 10
+		elseif type == "knight" then
+			return 30
+		elseif type == "bishop" then
+			return 30
+		elseif type == "rook" then
+			return 50
+		elseif type == "queen" then
+			return 90
+		elseif type == "king" then
+			return 900
+		end
+	elseif color == "white" then
+		if type == "pawn" then
+			return -10
+		elseif type == "knight" then
+			return -30
+		elseif type == "bishop" then
+			return -30
+		elseif type == "rook" then
+			return -50
+		elseif type == "queen" then
+			return -90
+		elseif type == "king" then
+			return -900
+		end
+	end
+end
+
+function AI:evaluateBoard(matrix)
+	local value = 0
+	for i = 1, 8 do
+		for j = 1, 8 do
+			local piece = matrix[i][j]
+			if piece ~= nil then
+				value = value + self:getPieceValue(piece)
+			end
+		end
+	end
+	return value
+end
+
+function AI:selectBestMove(array)
+	-- check first if can capture any piece
+	local firstValue = self:evaluateBoard(array[1])
+	for i = 2, table.getn(array) do
+		local board = array[i]
+		local value = self:evaluateBoard(board)
+		if value > firstValue then
+			-- algorithm to capture a piece
+			local highestValue = -1000000
+			local selectedIndex = nil
+			-- select strongest board in array
+			for i, v in ipairs(array) do
+				local value = self:evaluateBoard(v)
+				print(value)
+				if value > highestValue then
+					highestValue = value
+					selectedIndex = i
+				end
+			end
+			return array[selectedIndex]
+		end
+	end
+	-- all moves are the same so do random move
+	return AI:selectRandomMove(array)
+end
+
 function AI:getMatrixDiff(matrix1, matrix2)
 	local originX, originY
 	local destinationX, destinationY
@@ -460,12 +533,9 @@ end
 
 function AI:getNextMove()
 	local moveArray = self:getBoards(self.boardMatrix)
-	print("array size:", table.getn(moveArray))
-	-- choose move from a random number
-	local selectedBoard = AI:selectRandomMove(moveArray)
+	local selectedBoard = self:selectBestMove(moveArray)
 	local originX, originY, destinationX, destinationY =
 		self:getMatrixDiff(self.boardMatrix, selectedBoard)
-	print(originX, originY, destinationX, destinationY)
 	return originX, originY, destinationX, destinationY
 end
 
