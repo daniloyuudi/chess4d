@@ -1,4 +1,5 @@
 local Piece = require("Piece")
+local PieceSprite = require("PieceSprite")
 
 local Board = {}
 
@@ -9,34 +10,44 @@ function Board:loadMatrix()
 	end
 end
 
-function Board:loadNewGame()
-	self.pieces[1][1] = Piece:new("black", "rook")
-	self.pieces[2][1] = Piece:new("black", "knight")
-	self.pieces[3][1] = Piece:new("black", "bishop")
-	self.pieces[4][1] = Piece:new("black", "queen")
-	self.pieces[5][1] = Piece:new("black", "king")
-	self.pieces[6][1] = Piece:new("black", "bishop")
-	self.pieces[7][1] = Piece:new("black", "knight")
-	self.pieces[8][1] = Piece:new("black", "rook")
-	for i = 1, 8 do
-		self.pieces[i][2] = Piece:new("black", "pawn")
+function Board:addPiece(x, y, color, type)
+	local newPiece = Piece:new(color, type)
+	self.pieces[x][y] = newPiece
+	local newSprite = PieceSprite:new(newPiece, x, y)
+	if self.sprites == nil then
+		self.sprites = newSprite
+	else
+		local pointer = self.sprites
+		while pointer:getNext() do
+			pointer = pointer:getNext()
+		end
+		pointer:setNext(newSprite)
 	end
+end
 
-	self.pieces[1][6] = Piece:new("black", "pawn")
-	self.pieces[2][5] = Piece:new("black", "pawn")
-	self.pieces[4][4] = Piece:new("white", "knight")
-
-	self.pieces[1][8] = Piece:new("white", "rook")
-	self.pieces[2][8] = Piece:new("white", "knight")
-	self.pieces[3][8] = Piece:new("white", "bishop")
-	self.pieces[4][8] = Piece:new("white", "queen")
-	self.pieces[5][8] = Piece:new("white", "king")
-	self.pieces[6][8] = Piece:new("white", "bishop")
-	self.pieces[7][8] = Piece:new("white", "knight")
-	self.pieces[8][8] = Piece:new("white", "rook")
+function Board:loadNewGame()
+	self:addPiece(1, 1, "black", "rook")
+	self:addPiece(2, 1, "black", "knight")
+	self:addPiece(3, 1, "black", "bishop")
+	self:addPiece(4, 1, "black", "queen")
+	self:addPiece(5, 1, "black", "king")
+	self:addPiece(6, 1, "black", "bishop")
+	self:addPiece(7, 1, "black", "knight")
+	self:addPiece(8, 1, "black", "rook")
 	for i = 1, 8 do
-		self.pieces[i][7] = Piece:new("white", "pawn")
-	end	
+		self:addPiece(i, 2, "black", "pawn")
+	end
+	self:addPiece(1, 8, "white", "rook")
+	self:addPiece(2, 8, "white", "knight")
+	self:addPiece(3, 8, "white", "bishop")
+	self:addPiece(4, 8, "white", "queen")
+	self:addPiece(5, 8, "white", "king")
+	self:addPiece(6, 8, "white", "bishop")
+	self:addPiece(7, 8, "white", "knight")
+	self:addPiece(8, 8, "white", "rook")
+	for i = 1, 8 do
+		self:addPiece(i, 7, "white", "pawn")
+	end
 end
 
 function Board:new()
@@ -62,9 +73,38 @@ function Board:hasPiece(color, x, y)
 	return false
 end
 
+function Board:searchSprite(x, y)
+	local sprite = self.sprites
+	while sprite ~= nil do
+		if sprite:getX() == (x-1)*75 and sprite:getY() == (y-1)*75 then
+			return sprite
+		end
+		sprite = sprite:getNext()
+	end
+	return nil
+end
+
+function Board:removeSprite(sprite)
+	local pointer = self.sprites
+	while pointer:getNext() ~= sprite do
+		pointer = pointer:getNext()
+	end
+	local next = pointer:getNext():getNext()
+	pointer:setNext(next)
+end
+
 function Board:movePiece(x1, y1, x2, y2)
 	self.pieces[x2][y2] = self.pieces[x1][y1]
 	self.pieces[x1][y1] = nil
+	-- remove sprite in new position first
+	local targetSprite = self:searchSprite(x2, y2)
+	print(targetSprite)
+	if targetSprite ~= nil then
+		self:removeSprite(targetSprite)
+	end
+	-- move sprite
+	local sprite = self:searchSprite(x1, y1)
+	sprite:move((x2-1)*75, (y2-1)*75)
 end
 
 function Board:getPawnMoves(x, y)
@@ -86,8 +126,8 @@ function Board:getPawnMoves(x, y)
 		table.insert(moves, {x, y-1})
 	end
 	-- opening move
-	if y == 7 and not self:hasPiece("any", x, y-1) then
-		if not self:hasPiece("black", x, y-2) then
+	if y == 7 then
+		if not self:hasPiece("any", x, y-2) then
 			table.insert(moves, {x, y-2})
 		end
 	end
@@ -492,13 +532,10 @@ function Board:drawBoard()
 end
 
 function Board:drawPieces()
-	for i = 1, 8 do
-		for j = 1, 8 do
-			local piece = self.pieces[i][j]
-			if piece ~= nil then
-				self.pieces[i][j]:draw((i-1)*75,(j-1)*75)
-			end
-		end
+	local pointer = self.sprites
+	while pointer ~= nil do
+		pointer:draw()
+		pointer = pointer:getNext()
 	end
 end
 
