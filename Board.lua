@@ -24,7 +24,7 @@ function Board:loadNewGame()
 
 	self.pieces[1][6] = Piece:new("black", "pawn")
 	self.pieces[2][5] = Piece:new("black", "pawn")
-	self.pieces[4][4] = Piece:new("white", "bishop")
+	self.pieces[4][4] = Piece:new("white", "king")
 
 	self.pieces[1][8] = Piece:new("white", "rook")
 	self.pieces[2][8] = Piece:new("white", "knight")
@@ -204,6 +204,59 @@ function Board:getBishopMoves(x, y)
 	return moves
 end
 
+function Board:getKingMoves(x, y)
+	local moves = {}
+	-- move left
+	if x > 1 then
+		if not self:hasPiece("white", x-1, y) then
+			table.insert(moves, {x-1,y})
+		end
+	end
+	-- move left-up
+	if x > 1 and y > 1 then
+		if not self:hasPiece("white", x-1, y-1) then
+			table.insert(moves, {x-1,y-1})
+		end
+	end
+	-- move up
+	if y > 1 then
+		if not self:hasPiece("white", x, y-1) then
+			table.insert(moves, {x,y-1})
+		end
+	end
+	-- move right-up
+	if x < 8 and y > 1 then
+		if not self:hasPiece("white", x+1, y-1) then
+			table.insert(moves, {x+1,y-1})
+		end
+	end
+	-- move right
+	if x < 8 then
+		if not self:hasPiece("white", x+1, y) then
+			table.insert(moves, {x+1,y})
+		end
+	end
+	-- move right-down
+	if x < 8 and y < 8 then
+		if not self:hasPiece("white", x+1, y+1) then
+			table.insert(moves, {x+1,y+1})
+		end
+	end
+	-- move down
+	if y < 8 then
+		if not self:hasPiece("white", x, y+1) then
+			table.insert(moves, {x,y+1})
+		end
+	end
+	-- move down-left
+	if x > 1 and y < 8 then
+		if not self:hasPiece("white", x-1, y+1) then
+			table.insert(moves, {x-1, y+1})
+		end
+	end
+	return moves
+end
+
 function Board:hasMove(moves, x, y)
 	for _, v in ipairs(moves) do
 		if v[1] == x and v[2] == y then
@@ -233,6 +286,13 @@ function Board:checkMove(x1, y1, x2, y2)
 		end
 		if type == "bishop" then
 			local moves = self:getBishopMoves(x1, y1)
+			if self:hasMove(moves, x2, y2) then
+				return true
+			end
+			return false
+		end
+		if type == "king" then
+			local moves = self:getKingMoves(x1, y1)
 			if self:hasMove(moves, x2, y2) then
 				return true
 			end
