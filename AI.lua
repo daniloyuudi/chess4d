@@ -1,4 +1,5 @@
 local Piece = require("Piece")
+local Moves = require("Moves")
 
 local AI = {}
 
@@ -6,380 +7,24 @@ function AI:new()
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
+	o.moves = Moves:new()
 	return o
-end
-
-function AI:hasPiece(color, x, y)
-	local piece = self.boardMatrix[x][y]
-	if piece ~= nil then
-		if color == "any" then
-			return true
-		end
-		if piece:getColor() == color then
-			return true
-		end
-	end
-	return false
-end
-
-function AI:getPawnMoves(x, y)
-	local moves = {}
-	-- capture left
-	if x > 1 then
-		if self:hasPiece("white", x-1, y+1) then
-			table.insert(moves, {x-1, y+1})
-		end
-	end
-	-- capture right
-	if x < 8 then
-		if self:hasPiece("white", x+1, y+1) then
-			table.insert(moves, {x+1, y+1})
-		end
-	end
-	-- move forward
-	if not self:hasPiece("any", x, y+1) then
-		table.insert(moves, {x, y+1})
-	end
-	-- opening move
-	if y == 2 then
-		if not self:hasPiece("any", x, y+2) then
-			table.insert(moves, {x, y+2})
-		end
-	end
-	return moves
-end
-
-function AI:getRookMoves(x, y)
-	local quadsLeft = x-1
-	local quadsRight = 8-x
-	local quadsUp = y-1
-	local quadsDown = 8-y
-	local moves = {}
-	-- move right
-	for i = 1, quadsRight do
-		if self:hasPiece("black", x+i, y) then
-			break
-		end
-		if self:hasPiece("white", x+i, y) then
-			table.insert(moves, {x+i, y})
-			break
-		end
-		table.insert(moves, {x+i, y})
-	end
-	-- move up
-	for i = 1, quadsUp do
-		if self:hasPiece("black", x, y-i) then
-			break
-		end
-		if self:hasPiece("white", x, y-i) then
-			table.insert(moves, {x,y-i})
-			break
-		end
-		table.insert(moves, {x,y-i})
-	end
-	-- move left
-	for i = 1, quadsLeft do
-		if self:hasPiece("black", x-i, y) then
-			break
-		end
-		if self:hasPiece("white", x-i, y) then
-			table.insert(moves, {x-i, y})
-			break
-		end
-		table.insert(moves, {x-i, y})
-	end
-	-- move down
-	for i = 1, quadsDown do
-		if self:hasPiece("black", x, y+i) then
-			break
-		end
-		if self:hasPiece("white", x, y+i) then
-			table.insert(moves, {x,y+i})
-			break
-		end
-		table.insert(moves, {x, y+i})
-	end
-	return moves
-end
-
-function AI:getBishopMoves(x, y)
-	local quadsLeft = x-1
-	local quadsRight = 8-x
-	local quadsUp = y-1
-	local quadsDown = 8-y
-	local quadsLeftUp = math.min(quadsLeft, quadsUp)
-	local quadsRightUp = math.min(quadsRight, quadsUp)
-	local quadsRightDown = math.min(quadsRight, quadsDown)
-	local quadsLeftDown = math.min(quadsLeft, quadsDown)
-	local moves = {}
-	-- move left-up
-	for i = 1, quadsLeftUp do
-		if self:hasPiece("black", x-i, y-i) then
-			break
-		end
-		if self:hasPiece("white", x-i, y-i) then
-			table.insert(moves, {x-i,y-i})
-			break
-		end
-		table.insert(moves, {x-i,y-i})
-	end
-	-- move right-up
-	for i = 1, quadsRightUp do
-		if self:hasPiece("black", x+i, y-i) then
-			break
-		end
-		if self:hasPiece("white", x+i, y-i) then
-			table.insert(moves, {x+i,y-i})
-			break
-		end
-		table.insert(moves, {x+i,y-i})
-	end
-	-- move right-down
-	for i = 1, quadsRightDown do
-		if self:hasPiece("black", x+i, y+i) then
-			break
-		end
-		if self:hasPiece("white", x+i, y+i) then
-			table.insert(moves, {x+i,y+i})
-			break
-		end
-		table.insert(moves, {x+i,y+i})
-	end
-	-- move left-down
-	for i = 1, quadsLeftDown do
-		if self:hasPiece("black", x-i, y+i) then
-			break
-		end
-		if self:hasPiece("white", x-i, y+i) then
-			table.insert(moves, {x-i,y+i})
-			break
-		end
-		table.insert(moves, {x-i,y+i})
-	end
-	return moves
-end
-
-function AI:getKnightMoves(x, y)
-	local moves = {}
-	-- move left then up
-	if x > 2 and y > 1 then
-		if not self:hasPiece("black", x-2, y-1) then
-			table.insert(moves, {x-2,y-1})
-		end
-	end
-	-- move up then left
-	if x > 1 and y > 2 then
-		if not self:hasPiece("black", x-1, y-2) then
-			table.insert(moves, {x-1,y-2})
-		end
-	end
-	-- move up then right
-	if x < 8 and y > 2 then
-		if not self:hasPiece("black", x+1, y-2) then
-			table.insert(moves, {x+1, y-2})
-		end
-	end
-	-- move right then up
-	if x < 7 and y > 1 then
-		if not self:hasPiece("black", x+2, y-1) then
-			table.insert(moves, {x+2, y-1})
-		end
-	end
-	-- move right then down
-	if x < 7 and y < 8 then
-		if not self:hasPiece("black", x+2, y+1) then
-			table.insert(moves, {x+2, y+1})
-		end
-	end
-	-- move down then right
-	if x < 8 and y < 7 then
-		if not self:hasPiece("black", x+1, y+2) then
-			table.insert(moves, {x+1, y+2})
-		end
-	end
-	-- move down then left
-	if x > 1 and y < 7 then
-		if not self:hasPiece("black", x-1, y+2) then
-			table.insert(moves, {x-1, y+2})
-		end
-	end
-	-- move left then down
-	if x > 2 and y < 8 then
-		if not self:hasPiece("black", x-2, y+1) then
-			table.insert(moves, {x-2, y+1})
-		end
-	end
-	return moves
-end
-
-function AI:getQueenMoves(x, y)
-	local quadsLeft = x-1
-	local quadsRight = 8-x
-	local quadsUp = y-1
-	local quadsDown = 8-y
-	local quadsLeftUp = math.min(quadsLeft, quadsUp)
-	local quadsRightUp = math.min(quadsRight, quadsUp)
-	local quadsRightDown = math.min(quadsRight, quadsDown)
-	local quadsLeftDown = math.min(quadsLeft, quadsDown)
-	local moves = {}
-	-- move left-up
-	for i = 1, quadsLeftUp do
-		if self:hasPiece("black", x-i, y-i) then
-			break
-		end
-		if self:hasPiece("white", x-i, y-i) then
-			table.insert(moves, {x-i,y-i})
-			break
-		end
-		table.insert(moves, {x-i,y-i})
-	end
-	-- move right-up
-	for i = 1, quadsRightUp do
-		if self:hasPiece("black", x+i, y-i) then
-			break
-		end
-		if self:hasPiece("white", x+i, y-i) then
-			table.insert(moves, {x+i,y-i})
-			break
-		end
-		table.insert(moves, {x+i,y-i})
-	end
-	-- move right-down
-	for i = 1, quadsRightDown do
-		if self:hasPiece("black", x+i, y+i) then
-			break
-		end
-		if self:hasPiece("white", x+i, y+i) then
-			table.insert(moves, {x+i,y+i})
-			break
-		end
-		table.insert(moves, {x+i,y+i})
-	end
-	-- move left-down
-	for i = 1, quadsLeftDown do
-		if self:hasPiece("black", x-i, y+i) then
-			break
-		end
-		if self:hasPiece("white", x-i, y+i) then
-			table.insert(moves, {x-i,y+i})
-			break
-		end
-		table.insert(moves, {x-i,y+i})
-	end
-	-- move right
-	for i = 1, quadsRight do
-		if self:hasPiece("black", x+i, y) then
-			break
-		end
-		if self:hasPiece("white", x+i, y) then
-			table.insert(moves, {x+i, y})
-			break
-		end
-		table.insert(moves, {x+i, y})
-	end
-	-- move up
-	for i = 1, quadsUp do
-		if self:hasPiece("black", x, y-i) then
-			break
-		end
-		if self:hasPiece("white", x, y-i) then
-			table.insert(moves, {x,y-i})
-			break
-		end
-		table.insert(moves, {x,y-i})
-	end
-	-- move left
-	for i = 1, quadsLeft do
-		if self:hasPiece("black", x-i, y) then
-			break
-		end
-		if self:hasPiece("white", x-i, y) then
-			table.insert(moves, {x-i, y})
-			break
-		end
-		table.insert(moves, {x-i, y})
-	end
-	-- move down
-	for i = 1, quadsDown do
-		if self:hasPiece("black", x, y+i) then
-			break
-		end
-		if self:hasPiece("white", x, y+i) then
-			table.insert(moves, {x,y+i})
-			break
-		end
-		table.insert(moves, {x, y+i})
-	end
-	return moves
-end
-
-function AI:getKingMoves(x, y)
-	local moves = {}
-	-- move left
-	if x > 1 then
-		if not self:hasPiece("black", x-1, y) then
-			table.insert(moves, {x-1,y})
-		end
-	end
-	-- move left-up
-	if x > 1 and y > 1 then
-		if not self:hasPiece("black", x-1, y-1) then
-			table.insert(moves, {x-1,y-1})
-		end
-	end
-	-- move up
-	if y > 1 then
-		if not self:hasPiece("black", x, y-1) then
-			table.insert(moves, {x,y-1})
-		end
-	end
-	-- move right-up
-	if x < 8 and y > 1 then
-		if not self:hasPiece("black", x+1, y-1) then
-			table.insert(moves, {x+1,y-1})
-		end
-	end
-	-- move right
-	if x < 8 then
-		if not self:hasPiece("black", x+1, y) then
-			table.insert(moves, {x+1,y})
-		end
-	end
-	-- move right-down
-	if x < 8 and y < 8 then
-		if not self:hasPiece("black", x+1, y+1) then
-			table.insert(moves, {x+1,y+1})
-		end
-	end
-	-- move down
-	if y < 8 then
-		if not self:hasPiece("black", x, y+1) then
-			table.insert(moves, {x,y+1})
-		end
-	end
-	-- move down-left
-	if x > 1 and y < 8 then
-		if not self:hasPiece("black", x-1, y+1) then
-			table.insert(moves, {x-1, y+1})
-		end
-	end
-	return moves
 end
 
 function AI:getPossibleMoves(x, y, piece)
 	local type = piece:getType()
 	if type == "pawn" then
-		return self:getPawnMoves(x, y)
+		return self.moves:getPawnMoves(x, y, "black")
 	elseif type == "rook" then
-		return self:getRookMoves(x, y)
+		return self.moves:getRookMoves(x, y, "black")
 	elseif type == "knight" then
-		return self:getKnightMoves(x, y)
+		return self.moves:getKnightMoves(x, y, "black")
 	elseif type == "bishop" then
-		return self:getBishopMoves(x, y)
+		return self.moves:getBishopMoves(x, y, "black")
 	elseif type == "queen" then
-		return self:getQueenMoves(x, y)
+		return self.moves:getQueenMoves(x, y, "black")
 	elseif type == "king" then
-		return self:getKingMoves(x, y)
+		return self.moves:getKingMoves(x, y, "black")
 	end
 	return {}
 end
@@ -428,8 +73,9 @@ function AI:getBoards(currentBoard)
 	return boards
 end
 
-function AI:setBoardMatrix(boardMatrix)
-	self.boardMatrix = boardMatrix
+function AI:setBoardMatrix(matrix)
+	self.boardMatrix = matrix
+	self.moves:setBoardMatrix(matrix)
 end
 
 function AI:selectRandomMove(array)
