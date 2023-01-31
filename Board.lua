@@ -59,6 +59,7 @@ function Board:new()
 	o:loadNewGame()
 	o.moves = Moves:new()
 	o.moves:setBoardMatrix(o.pieces)
+	o.checkMate = false
 	return o
 end
 
@@ -96,6 +97,7 @@ function Board:removeSprite(sprite)
 end
 
 function Board:movePiece(x1, y1, x2, y2)
+	-- if king captured then set checkmate
 	self.pieces[x2][y2] = self.pieces[x1][y1]
 	self.pieces[x1][y1] = nil
 	-- remove sprite in new position first
@@ -105,7 +107,7 @@ function Board:movePiece(x1, y1, x2, y2)
 	end
 	-- move sprite
 	local sprite = self:searchSprite(x1, y1)
-	sprite:move((x2-1)*75, (y2-1)*75)
+	sprite:setDestination((x2-1)*75, (y2-1)*75)
 end
 
 function Board:hasMove(moves, x, y)
@@ -173,6 +175,14 @@ end
 
 function Board:getMatrix()
 	return self.pieces
+end
+
+function Board:gameEnded()
+	return self.checkMate
+end
+
+function Board:getPieceSprite(x, y)
+	return self:searchSprite(x, y)
 end
 
 return Board
