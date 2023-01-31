@@ -18,6 +18,7 @@ function Match:new()
 	o.board = Board:new()
 	o.boardDrawer = BoardDrawer:new(o.board)
 	o.ai = AI:new()
+	o.gameEndedFlag = false
 	return o
 end
 
@@ -35,6 +36,16 @@ function Match:moveSprite()
 end
 
 function Match:update()
+	-- debug
+	if love.keyboard.isDown("z") then
+		self.gameEndedFlag = true
+		self.winner = "white"
+	end
+	if love.keyboard.isDown("x") then
+		self.gameEndedFlag = true
+		self.winner = "black"
+	end
+
 	if self.turn == "white" then
 		if self.movingPiece then
 			self:moveSprite()
@@ -51,7 +62,9 @@ function Match:update()
 					if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
 						self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
 						if self.board:gameEnded() then
-							-- change to victory / defeat screen
+							-- change to victory screen
+							self.gameEndedFlag = true
+							self.winner = "white"
 						end
 						self.turn = "black"
 						self.currentSprite = self.board:getPieceSprite(self.selectedX, self.selectedY)
@@ -70,13 +83,23 @@ function Match:update()
 			local originX, originY, destinationX, destinationY = self.ai:getNextMove()
 			self.board:movePiece(originX, originY, destinationX, destinationY)
 			if self.board:gameEnded() then
-				-- change to victory / defeat screen
+				-- change to defeat screen
+				self.gameEndedFlag = true
+				self.winner = "black"
 			end
 			self.turn = "white"
 			self.currentSprite = self.board:getPieceSprite(originX, originY)
 			self.movingPiece = true
 		end
 	end
+end
+
+function Match:gameEnded()
+	return self.gameEndedFlag
+end
+
+function Match:getWinner()
+	return self.winner
 end
 
 function Match:draw()
