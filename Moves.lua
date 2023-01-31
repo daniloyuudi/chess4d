@@ -90,10 +90,10 @@ function Moves:getRookMoves(x, y, color)
 		end
 		-- move up
 		for i = 1, quadsUp do
-			if not self:hasPiece("white", x, y-1) then
-				table.insert(moves, {x, y-1})
+			if not self:hasPiece("white", x, y-i) then
+				table.insert(moves, {x, y-i})
 			end
-			if self:hasPiece("any", x, y-1) then
+			if self:hasPiece("any", x, y-i) then
 				break
 			end
 		end
@@ -108,10 +108,10 @@ function Moves:getRookMoves(x, y, color)
 		end
 		-- move down
 		for i = 1, quadsDown do
-			if not self:hasPiece("white", x, y+1) then
-				table.insert(moves, {x, y+1})
+			if not self:hasPiece("white", x, y+i) then
+				table.insert(moves, {x, y+i})
 			end
-			if self:hasPiece("any", x, y+1) then
+			if self:hasPiece("any", x, y+i) then
 				break
 			end
 		end
@@ -127,10 +127,10 @@ function Moves:getRookMoves(x, y, color)
 		end
 		-- move up
 		for i = 1, quadsUp do
-			if not self:hasPiece("black", x, y-1) then
-				table.insert(moves, {x, y-1})
+			if not self:hasPiece("black", x, y-i) then
+				table.insert(moves, {x, y-i})
 			end
-			if self:hasPiece("any", x, y-1) then
+			if self:hasPiece("any", x, y-i) then
 				break
 			end
 		end
@@ -145,10 +145,10 @@ function Moves:getRookMoves(x, y, color)
 		end
 		-- move down
 		for i = 1, quadsDown do
-			if not self:hasPiece("black", x, y+1) then
-				table.insert(moves, {x, y+1})
+			if not self:hasPiece("black", x, y+i) then
+				table.insert(moves, {x, y+i})
 			end
-			if self:hasPiece("any", x, y+1) then
+			if self:hasPiece("any", x, y+i) then
 				break
 			end
 		end
@@ -379,10 +379,10 @@ function Moves:getQueenMoves(x, y, color)
 		end
 		-- move up
 		for i = 1, quadsUp do
-			if not self:hasPiece("white", x, y-1) then
-				table.insert(moves, {x, y-1})
+			if not self:hasPiece("white", x, y-i) then
+				table.insert(moves, {x, y-i})
 			end
-			if self:hasPiece("any", x, y-1) then
+			if self:hasPiece("any", x, y-i) then
 				break
 			end
 		end
@@ -415,10 +415,10 @@ function Moves:getQueenMoves(x, y, color)
 		end
 		-- move down
 		for i = 1, quadsDown do
-			if not self:hasPiece("white", x, y+1) then
-				table.insert(moves, {x, y+1})
+			if not self:hasPiece("white", x, y+i) then
+				table.insert(moves, {x, y+i})
 			end
-			if self:hasPiece("any", x, y+1) then
+			if self:hasPiece("any", x, y+i) then
 				break
 			end
 		end
@@ -452,10 +452,10 @@ function Moves:getQueenMoves(x, y, color)
 		end
 		-- move up
 		for i = 1, quadsUp do
-			if not self:hasPiece("black", x, y-1) then
-				table.insert(moves, {x, y-1})
+			if not self:hasPiece("black", x, y-i) then
+				table.insert(moves, {x, y-i})
 			end
-			if self:hasPiece("any", x, y-1) then
+			if self:hasPiece("any", x, y-i) then
 				break
 			end
 		end
@@ -488,10 +488,10 @@ function Moves:getQueenMoves(x, y, color)
 		end
 		-- move down
 		for i = 1, quadsDown do
-			if not self:hasPiece("black", x, y+1) then
-				table.insert(moves, {x, y+1})
+			if not self:hasPiece("black", x, y+i) then
+				table.insert(moves, {x, y+i})
 			end
-			if self:hasPiece("any", x, y+1) then
+			if self:hasPiece("any", x, y+i) then
 				break
 			end
 		end

@@ -1,7 +1,7 @@
 local Images = require("Images")
 
 local PieceSprite = {
-	ANIMATION_STEPS = 15
+	ANIMATION_STEPS = 12
 }
 
 function PieceSprite:loadSprite()
