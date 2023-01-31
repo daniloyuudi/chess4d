@@ -97,7 +97,11 @@ function Board:removeSprite(sprite)
 end
 
 function Board:movePiece(x1, y1, x2, y2)
-	-- if king captured then set checkmate
+	-- if king captured set checkmate
+	local piece = self.pieces[x2][y2]
+	if piece ~= nil and piece:getType() == "king" then
+		self.checkMate = true
+	end
 	self.pieces[x2][y2] = self.pieces[x1][y1]
 	self.pieces[x1][y1] = nil
 	-- remove sprite in new position first

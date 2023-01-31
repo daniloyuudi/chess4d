@@ -70,10 +70,6 @@ function PieceSprite:getDistance(x1, y1, x2, y2)
 	return math.sqrt((x2-x1)^2 + (y2-y1)^2)
 end
 
-function PieceSprite:radToDeg(rad)
-	return rad*180/math.pi
-end
-
 function PieceSprite:move()
 	if self.animationStep == (self.ANIMATION_STEPS-1) then
 		self.state = "still"
@@ -82,7 +78,6 @@ function PieceSprite:move()
 		return
 	end
 	local angle = self:getAngle(self.destinationX, self.destinationY, self.originX, self.originY)
-	print("angle", self:radToDeg(angle))
 	local distance = self:getDistance(self.originX, self.originY,
 		self.destinationX, self.destinationY)
 	local stepDistance = distance/self.ANIMATION_STEPS
