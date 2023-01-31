@@ -1,6 +1,6 @@
 local Moves = {}
 
-function Moves:new(boardState)
+function Moves:new()
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
@@ -40,7 +40,7 @@ function Moves:getPawnMoves(x, y, color)
 			table.insert(moves, {x, y-1})
 		end
 		-- opening move
-		if y == 2 then
+		if y == 7 then
 			if not self:hasPiece("any", x, y-2) then
 				table.insert(moves, {x, y-2})
 			end
