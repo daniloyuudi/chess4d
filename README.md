@@ -1,6 +1,10 @@
 # CHESS 4D
+O Chess 4D é um jogo de xadrez feito em Lua. O jogo possui uma IA que avalia a melhor jogada possível.
 
-O Chess 4D é um jogo de xadrez feito em Lua. O jogo possui uma inteligência artificial que avalia a melhor jogada entre uma lista de movimentos.
+## Execução
+Para executar o jogo é necessário instalar o framework LOVE. Para executar o jogo usar:
+
+love pasta_do_jogo
 
 ## Ferramentas usadas
 - LOVE 11.4
