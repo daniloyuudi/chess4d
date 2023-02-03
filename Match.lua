@@ -2,7 +2,8 @@ local Mouse = require("Mouse")
 local Board = require("Board")
 local BoardDrawer = require("BoardDrawer")
 local AI = require("AI")
-local ResultScreen
+local VictoryScreen
+local DefeatScreen
 
 local Match = {}
 
@@ -36,19 +37,18 @@ function Match:moveSprite()
 end
 
 function Match:update()
-	ResultScreen = ResultScreen or require("ResultScreen")
+	VictoryScreen = VictoryScreen or require("VictoryScreen")
+	DefeatScreen = DefeatScreen or require("DefeatScreen")
 	-- debug
 	if love.keyboard.isDown("z") then
-		local resultScreen = ResultScreen:new()
-		resultScreen:setResult('victory')
-		self.context:changeScreen(resultScreen)
+		local victoryScreen = VictoryScreen:new()
+		self.context:changeScreen(victoryScreen)
 	end
 	if love.keyboard.isDown("x") then
-		local resultScreen = ResultScreen:new()
-		resultScreen:setResult('defeat')
-		self.context:changeScreen(resultScreen)
+		local defeatScreen = DefeatScreen:new()
+		self.context:changeScreen(defeatScreen)
 	end
-	
+
 	if self.turn == "white" then
 		if self.movingPiece then
 			self:moveSprite()
@@ -65,9 +65,8 @@ function Match:update()
 					if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
 						self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
 						if self.board:gameEnded() then
-							local resultScreen = ResultScreen:new()
-							resultScreen:setResult('victory')
-							self.context:changeScreen(resultScreen)
+							local victoryScreen = VictoryScreen:new()
+							self.context:changeScreen(victoryScreen)
 						end
 						self.turn = "black"
 						self.currentSprite = self.board:getPieceSprite(self.selectedX, self.selectedY)
@@ -86,9 +85,8 @@ function Match:update()
 			local originX, originY, destinationX, destinationY = self.ai:getNextMove()
 			self.board:movePiece(originX, originY, destinationX, destinationY)
 			if self.board:gameEnded() then
-				local resultScreen = ResultScreen:new()
-				resultScreen:setResult('defeat')
-				self.context:changeScreen(resultScreen)
+				local defeatScreen = DefeatScreen:new()
+				self.context:changeScreen(defeatScreen)
 			end
 			self.turn = "white"
 			self.currentSprite = self.board:getPieceSprite(originX, originY)
