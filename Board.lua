@@ -1,6 +1,11 @@
-local Piece = require("Piece")
 local PieceSprite = require("PieceSprite")
-local Moves = require("Moves")
+local Images = require("Images")
+local King = require("King")
+local Queen = require("Queen")
+local Rook = require("Rook")
+local Knight = require("Knight")
+local Bishop = require("Bishop")
+local Pawn = require("Pawn")
 
 local Board = {}
 
@@ -11,43 +16,113 @@ function Board:loadMatrix()
 	end
 end
 
-function Board:addPiece(x, y, color, type)
-	local newPiece = Piece:new(color, type)
-	self.pieces[x][y] = newPiece
-	local newSprite = PieceSprite:new(newPiece, x, y)
+function Board:newSprite(piece, x, y)
+	local images = Images:getInstance()
+	local type = getmetatable(piece)
+	local color = piece:getColor()
+	if type == Pawn then
+		local pawn = images:getPawn(color)
+		return PieceSprite:new(pawn, x, y)
+	elseif type == Rook then
+		local rook = images:getRook(color)
+		return PieceSprite:new(rook, x, y)
+	elseif type == Knight then
+		local knight = images:getKnight(color)
+		return PieceSprite:new(knight, x, y)
+	elseif type == Bishop then
+		local bishop = images:getBishop(color)
+		return PieceSprite:new(bishop, x, y)
+	elseif type == Queen then
+		local queen = images:getQueen(color)
+		return PieceSprite:new(queen, x, y)
+	elseif type == King then
+		local king = images:getKing(color)
+		return PieceSprite:new(king, x, y)
+	end
+end
+
+function Board:addSprite(sprite, x, y)
 	if self.sprites == nil then
-		self.sprites = newSprite
+		self.sprites = sprite
 	else
 		local pointer = self.sprites
 		while pointer:getNext() do
 			pointer = pointer:getNext()
 		end
-		pointer:setNext(newSprite)
+		pointer:setNext(sprite)
 	end
 end
 
+function Board:addKing(x, y, color)
+	local king = King:new(color)
+	king:setBoard(self)
+	self.pieces[x][y] = king
+	local newSprite = self:newSprite(king, x, y)
+	self.addSprite(king, x, y)
+end
+
+function Board:addQueen(x, y, color)
+	local queen = Queen:new(color)
+	queen:setBoard(self)
+	self.pieces[x][y] = queen
+	local newSprite = self:newSprite(queen, x, y)
+	self.addSprite(newSprite, x, y)
+end
+
+function Board:addRook(x, y, color)
+	local rook = Rook:new(color)
+	rook:setBoard(self)
+	self.pieces[x][y] = rook
+	local newSprite = self:newSprite(rook, x, y)
+	self.addSprite(newSprite, x, y)
+end
+
+function Board:addKnight(x, y, color)
+	local knight = Knight:new(color)
+	knight:setBoard(self)
+	self.pieces[x][y] = knight
+	local newSprite = self:newSprite(knight, x, y)
+	self.addSprite(newSprite, x, y)
+end
+
+function Board:addBishop(x, y, color)
+	local bishop = Bishop:new(color)
+	bishop:setBoard(self)
+	self.pieces[x][y] = bishop
+	local newSprite = self:newSprite(bishop, x, y)
+	self.addSprite(newSprite, x, y)
+end
+
+function Board:addPawn(x, y, color)
+	local pawn = Pawn:new(color)
+	pawn:setBoard(self)
+	self.pieces[x][y] = pawn
+	local newSprite = self:newSprite(pawn, x, y)
+	self.addSprite(newSprite, x, y)
+end
+
 function Board:loadNewGame()
-	self:addPiece(1, 1, "black", "rook")
-	self:addPiece(2, 1, "black", "knight")
-	self:addPiece(3, 1, "black", "bishop")
-	self:addPiece(4, 1, "black", "queen")
-	self:addPiece(5, 1, "black", "king")
-	self:addPiece(6, 1, "black", "bishop")
-	self:addPiece(7, 1, "black", "knight")
-	self:addPiece(8, 1, "black", "rook")
+	self:addRook(1, 1, "black")
+	self:addKnight(2, 1, "black")
+	self:addBishop(3, 1, "black")
+	self:addQueen(4, 1, "black")
+	self:addKing(5, 1, "black")
+	self:addBishop(6, 1, "black")
+	self:addKnight(7, 1, "black")
+	self:addRook(8, 1, "black")
 	for i = 1, 8 do
-		self:addPiece(i, 2, "black", "pawn")
+		self:addPawn(i, 2, "black")
 	end
-	self:addPiece(1, 8, "white", "rook")
-	self:addPiece(2, 8, "white", "knight")
-	self:addPiece(3, 8, "white", "bishop")
-	self:addPiece(4, 8, "white", "queen")
-	self:addPiece(5, 8, "white", "king")
-	self:addPiece(6, 8, "white", "bishop")
-	self:addPiece(7, 8, "white", "knight")
-	self:addPiece(8, 8, "white", "rook")
+	self:addRook(1, 8, "white")
+	self:addKnight(2, 8, "white")
+	self:addBishop(3, 8, "white")
+	self:addQueen(4, 8, "white")
+	self:addKing(5, 8, "white")
+	self:addBishop(6, 8, "white")
+	self:addKnight(7, 8, "white")
+	self:addRook(8, 8, "white")
 	for i = 1, 8 do
-		self:addPiece(i, 7, "white", "pawn")
+		self:addPawn(i, 7, "white")
 	end
 end
 
@@ -57,8 +132,6 @@ function Board:new()
 	self.__index = self
 	o:loadMatrix()
 	o:loadNewGame()
-	o.moves = Moves:new()
-	o.moves:setBoardMatrix(o.pieces)
 	o.checkMate = false
 	return o
 end
@@ -102,6 +175,7 @@ function Board:movePiece(x1, y1, x2, y2)
 	if piece ~= nil and piece:getType() == "king" then
 		self.checkMate = true
 	end
+	-- change switch pieces in matrix
 	self.pieces[x2][y2] = self.pieces[x1][y1]
 	self.pieces[x1][y1] = nil
 	-- remove sprite in new position first
@@ -126,50 +200,11 @@ end
 function Board:checkMove(x1, y1, x2, y2)
 	local piece = self.pieces[x1][y1]
 	if piece ~= nil then
-		local type = piece:getType()
-		if type == "pawn" then
-			local moves = self.moves:getPawnMoves(x1, y1, "white")
-			if self:hasMove(moves, x2, y2) then
-				return true
-			end
-			return false
+		local moves = piece:getMoves(x1, y1)
+		if self:hasMove(moves, x2, y2) then
+			return true
 		end
-		if type == "rook" then
-			local moves = self.moves:getRookMoves(x1, y1, "white")
-			if self:hasMove(moves, x2, y2) then
-				return true
-			end
-			return false
-		end
-		if type == "bishop" then
-			local moves = self.moves:getBishopMoves(x1, y1, "white")
-			if self:hasMove(moves, x2, y2) then
-				return true
-			end
-			return false
-		end
-		if type == "king" then
-			local moves = self.moves:getKingMoves(x1, y1, "white")
-			if self:hasMove(moves, x2, y2) then
-				return true
-			end
-			return false
-		end
-		if type == "queen" then
-			local moves = self.moves:getQueenMoves(x1, y1, "white")
-			if self:hasMove(moves, x2, y2) then
-				return true
-			end
-			return false
-		end
-		if type == "knight" then
-			local moves = self.moves:getKnightMoves(x1, y1, "white")
-			if self:hasMove(moves, x2, y2) then
-				return true
-			end
-			return false
-		end
-		return true
+		return false
 	end
 end
 

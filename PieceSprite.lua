@@ -4,30 +4,11 @@ local PieceSprite = {
 	ANIMATION_STEPS = 12
 }
 
-function PieceSprite:loadSprite()
-	local images = Images:getInstance()
-	local type = self.piece:getType()
-	local color = self.piece:getColor()
-	if type == "king" then
-		self.sprite = images:getKing(color)
-	elseif type == "queen" then
-		self.sprite = images:getQueen(color)
-	elseif type == "knight" then
-		self.sprite = images:getKnight(color)
-	elseif type == "bishop" then
-		self.sprite = images:getBishop(color)
-	elseif type == "rook" then
-		self.sprite = images:getRook(color)
-	elseif type == "pawn" then
-		self.sprite = images:getPawn(color)
-	end
-end
-
-function PieceSprite:new(piece, x, y)
+function PieceSprite:new(image, x, y)
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
-	o.piece = piece
+	o.image = image
 	o.x, o.y = (x-1)*75, (y-1)*75
 	o.originX, o.originY = 0, 0
 	o.destinationX, o.destinationY = 0, 0
@@ -91,7 +72,7 @@ function PieceSprite:getState()
 end
 
 function PieceSprite:draw()
-	love.graphics.draw(self.sprite, self.x, self.y)
+	love.graphics.draw(self.image, self.x, self.y)
 end
 
 return PieceSprite
