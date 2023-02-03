@@ -1,20 +1,19 @@
 local Piece = {}
 
-function Piece:new(color, type)
+function Piece:new(color)
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
 	o.color = color
-	o.type = type
 	return o
+end
+
+function Board:setBoard(board)
+	self.board = board
 end
 
 function Piece:getColor()
 	return self.color
-end
-
-function Piece:getType()
-	return self.type
 end
 
 return Piece
