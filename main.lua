@@ -1,8 +1,6 @@
 local Images = require("Images")
-local Piece = require("Piece")
-local Board = require("Board")
-local Match = require("Match")
-local GameState = require("GameState")
+local Game = require("Game")
+local Menu = require("Menu")
 
 function love.load()
 	love.graphics.setBackgroundColor(0.5, 0.5, 0.5, 1)
@@ -15,13 +13,14 @@ function love.load()
 	local images = Images:getInstance()
 	images:loadAll()
 
-	gameState = GameState:new()
+	local menu = Menu:new()
+	game = Game:new(menu)
 end
 
 function love.update()
-	gameState:update()
+	game:update()
 end
 
 function love.draw()
-	gameState:draw()
+	game:draw()
 end

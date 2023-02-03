@@ -1,4 +1,5 @@
 local Mouse = require("Mouse")
+local Match
 
 local ResultScreen = {}
 
@@ -7,7 +8,6 @@ function ResultScreen:new()
 	setmetatable(o, self)
 	self.__index = self
 	o.mouse = Mouse:new()
-	o.restartGameFlag = false
 	return o
 end
 
@@ -15,13 +15,15 @@ function ResultScreen:setResult(result)
 	self.result = result
 end
 
-function ResultScreen:restartGame()
-	return self.restartGameFlag
+function ResultScreen:setContext(context)
+	self.context = context
 end
 
 function ResultScreen:update()
+	Match = Match or require("Match")
 	if self.mouse:checkPressed() then
-		self.restartGameFlag = true
+		local match = Match:new()
+		self.context:changeScreen(match)
 	end
 end
 

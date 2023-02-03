@@ -2,6 +2,7 @@ local Mouse = require("Mouse")
 local Board = require("Board")
 local BoardDrawer = require("BoardDrawer")
 local AI = require("AI")
+local ResultScreen
 
 local Match = {}
 
@@ -18,7 +19,6 @@ function Match:new()
 	o.board = Board:new()
 	o.boardDrawer = BoardDrawer:new(o.board)
 	o.ai = AI:new()
-	o.gameEndedFlag = false
 	return o
 end
 
@@ -36,16 +36,19 @@ function Match:moveSprite()
 end
 
 function Match:update()
+	ResultScreen = ResultScreen or require("ResultScreen")
 	-- debug
 	if love.keyboard.isDown("z") then
-		self.gameEndedFlag = true
-		self.winner = "white"
+		local resultScreen = ResultScreen:new()
+		resultScreen:setResult('victory')
+		self.context:changeScreen(resultScreen)
 	end
 	if love.keyboard.isDown("x") then
-		self.gameEndedFlag = true
-		self.winner = "black"
+		local resultScreen = ResultScreen:new()
+		resultScreen:setResult('defeat')
+		self.context:changeScreen(resultScreen)
 	end
-
+	
 	if self.turn == "white" then
 		if self.movingPiece then
 			self:moveSprite()
@@ -62,9 +65,9 @@ function Match:update()
 					if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
 						self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
 						if self.board:gameEnded() then
-							-- change to victory screen
-							self.gameEndedFlag = true
-							self.winner = "white"
+							local resultScreen = ResultScreen:new()
+							resultScreen:setResult('victory')
+							self.context:changeScreen(resultScreen)
 						end
 						self.turn = "black"
 						self.currentSprite = self.board:getPieceSprite(self.selectedX, self.selectedY)
@@ -83,9 +86,9 @@ function Match:update()
 			local originX, originY, destinationX, destinationY = self.ai:getNextMove()
 			self.board:movePiece(originX, originY, destinationX, destinationY)
 			if self.board:gameEnded() then
-				-- change to defeat screen
-				self.gameEndedFlag = true
-				self.winner = "black"
+				local resultScreen = ResultScreen:new()
+				resultScreen:setResult('defeat')
+				self.context:changeScreen(resultScreen)
 			end
 			self.turn = "white"
 			self.currentSprite = self.board:getPieceSprite(originX, originY)
@@ -94,12 +97,8 @@ function Match:update()
 	end
 end
 
-function Match:gameEnded()
-	return self.gameEndedFlag
-end
-
-function Match:getWinner()
-	return self.winner
+function Match:setContext(context)
+	self.context = context
 end
 
 function Match:draw()
