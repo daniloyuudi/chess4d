@@ -5,6 +5,9 @@ function Mouse:new()
 	setmetatable(o, self)
 	self.__index = self
 	o.mouseDownFirst = true
+	if love.mouse.isDown(1) then
+		o.mouseDownFirst = false
+	end
 	return o
 end
 
@@ -16,7 +19,6 @@ function Mouse:checkPressed()
 		end
 		return false
 	end
-
 	self.mouseDownFirst = true
 	return false
 end
