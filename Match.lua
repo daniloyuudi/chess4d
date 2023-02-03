@@ -20,6 +20,7 @@ function Match:new()
 	o.board = Board:new()
 	o.boardDrawer = BoardDrawer:new(o.board)
 	o.ai = AI:new()
+	o.gameEnded = false
 	return o
 end
 
@@ -53,6 +54,10 @@ function Match:update()
 		if self.movingPiece then
 			self:moveSprite()
 		else
+			if self.gameEnded then
+				local defeatScreen = DefeatScreen:new()
+				self.context:changeScreen(defeatScreen)
+			end
 			if self.mouse:checkPressed() then
 				if not self.selected then
 					local quadX, quadY = self:getClickedQuad()
@@ -65,8 +70,7 @@ function Match:update()
 					if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
 						self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
 						if self.board:gameEnded() then
-							local victoryScreen = VictoryScreen:new()
-							self.context:changeScreen(victoryScreen)
+							self.gameEnded = true
 						end
 						self.turn = "black"
 						self.currentSprite = self.board:getPieceSprite(self.selectedX, self.selectedY)
@@ -80,13 +84,16 @@ function Match:update()
 		if self.movingPiece then
 			self:moveSprite()
 		else
+			if self.gameEnded then
+				local victoryScreen = VictoryScreen:new()
+				self.context:changeScreen(victoryScreen)
+			end
 			local currentBoard = self.board:getMatrix()
 			self.ai:setBoardMatrix(currentBoard)
 			local originX, originY, destinationX, destinationY = self.ai:getNextMove()
 			self.board:movePiece(originX, originY, destinationX, destinationY)
 			if self.board:gameEnded() then
-				local defeatScreen = DefeatScreen:new()
-				self.context:changeScreen(defeatScreen)
+				self.gameEnded = true
 			end
 			self.turn = "white"
 			self.currentSprite = self.board:getPieceSprite(originX, originY)
