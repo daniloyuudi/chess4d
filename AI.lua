@@ -94,7 +94,6 @@ function AI:selectBestMove(array)
 			-- select strongest board in array
 			for i, v in ipairs(array) do
 				local value = self:evaluateBoard(v)
-				print(value)
 				if value > highestValue then
 					highestValue = value
 					selectedIndex = i

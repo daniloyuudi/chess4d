@@ -1,11 +1,15 @@
-local PieceSprite = require("PieceSprite")
-local Images = require("Images")
 local King = require("King")
 local Queen = require("Queen")
 local Rook = require("Rook")
 local Knight = require("Knight")
 local Bishop = require("Bishop")
 local Pawn = require("Pawn")
+local KingSprite = require("KingSprite")
+local QueenSprite = require("QueenSprite")
+local RookSprite = require("RookSprite")
+local KnightSprite = require("KnightSprite")
+local BishopSprite = require("BishopSprite")
+local PawnSprite = require("PawnSprite")
 
 local Board = {}
 
@@ -16,28 +20,7 @@ function Board:loadMatrix()
 	end
 end
 
-function Board:newSprite(piece, x, y)
-	local images = Images:getInstance()
-	local type = getmetatable(piece)
-	local color = piece:getColor()
-	local image
-	if type == Pawn then
-		image = images:getPawn(color)
-	elseif type == Rook then
-		image = images:getRook(color)
-	elseif type == Knight then
-		image = images:getKnight(color)
-	elseif type == Bishop then
-		image = images:getBishop(color)
-	elseif type == Queen then
-		image = images:getQueen(color)
-	elseif type == King then
-		image = images:getKing(color)
-	end
-	return PieceSprite:new(image, x, y)
-end
-
-function Board:addSprite(sprite, x, y)
+function Board:addSprite(sprite)
 	if self.sprites ~= nil then
 		local pointer = self.sprites
 		while pointer:getNext() ~= nil do
@@ -53,48 +36,48 @@ function Board:addKing(x, y, color)
 	local king = King:new(color)
 	king:setBoard(self)
 	self.pieces[x][y] = king
-	local newSprite = self:newSprite(king, x, y)
-	self:addSprite(newSprite, x, y)
+	local kingSprite = KingSprite:new(color, x, y)
+	self:addSprite(kingSprite)
 end
 
 function Board:addQueen(x, y, color)
 	local queen = Queen:new(color)
 	queen:setBoard(self)
 	self.pieces[x][y] = queen
-	local newSprite = self:newSprite(queen, x, y)
-	self:addSprite(newSprite, x, y)
+	local queenSprite = QueenSprite:new(color, x, y)
+	self:addSprite(queenSprite, x, y)
 end
 
 function Board:addRook(x, y, color)
 	local rook = Rook:new(color)
 	rook:setBoard(self)
 	self.pieces[x][y] = rook
-	local newSprite = self:newSprite(rook, x, y)
-	self:addSprite(newSprite, x, y)
+	local rookSprite = RookSprite:new(color, x, y)
+	self:addSprite(rookSprite, x, y)
 end
 
 function Board:addKnight(x, y, color)
 	local knight = Knight:new(color)
 	knight:setBoard(self)
 	self.pieces[x][y] = knight
-	local newSprite = self:newSprite(knight, x, y)
-	self:addSprite(newSprite, x, y)
+	local knightSprite = KnightSprite:new(color, x, y)
+	self:addSprite(knightSprite, x, y)
 end
 
 function Board:addBishop(x, y, color)
 	local bishop = Bishop:new(color)
 	bishop:setBoard(self)
 	self.pieces[x][y] = bishop
-	local newSprite = self:newSprite(bishop, x, y)
-	self:addSprite(newSprite, x, y)
+	local bishopSprite = BishopSprite:new(color, x, y)
+	self:addSprite(bishopSprite, x, y)
 end
 
 function Board:addPawn(x, y, color)
 	local pawn = Pawn:new(color)
 	pawn:setBoard(self)
 	self.pieces[x][y] = pawn
-	local newSprite = self:newSprite(pawn, x, y)
-	self:addSprite(newSprite, x, y)
+	local pawnSprite = PawnSprite:new(color, x, y)
+	self:addSprite(pawnSprite, x, y)
 end
 
 function Board:loadNewGame()

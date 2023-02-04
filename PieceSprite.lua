@@ -1,19 +1,11 @@
-local Images = require("Images")
-
 local PieceSprite = {
 	ANIMATION_STEPS = 12
 }
 
-function PieceSprite:new(image, x, y)
+function PieceSprite:new()
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
-	o.image = image
-	o.x, o.y = (x-1)*75, (y-1)*75
-	o.originX, o.originY = 0, 0
-	o.destinationX, o.destinationY = 0, 0
-	o.state = "still" -- to add a transition state
-	o.animationStep = 0
 	return o
 end
 
