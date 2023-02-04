@@ -20,36 +20,32 @@ function Board:newSprite(piece, x, y)
 	local images = Images:getInstance()
 	local type = getmetatable(piece)
 	local color = piece:getColor()
+	local image
 	if type == Pawn then
-		local pawn = images:getPawn(color)
-		return PieceSprite:new(pawn, x, y)
+		image = images:getPawn(color)
 	elseif type == Rook then
-		local rook = images:getRook(color)
-		return PieceSprite:new(rook, x, y)
+		image = images:getRook(color)
 	elseif type == Knight then
-		local knight = images:getKnight(color)
-		return PieceSprite:new(knight, x, y)
+		image = images:getKnight(color)
 	elseif type == Bishop then
-		local bishop = images:getBishop(color)
-		return PieceSprite:new(bishop, x, y)
+		image = images:getBishop(color)
 	elseif type == Queen then
-		local queen = images:getQueen(color)
-		return PieceSprite:new(queen, x, y)
+		image = images:getQueen(color)
 	elseif type == King then
-		local king = images:getKing(color)
-		return PieceSprite:new(king, x, y)
+		image = images:getKing(color)
 	end
+	return PieceSprite:new(image, x, y)
 end
 
 function Board:addSprite(sprite, x, y)
-	if self.sprites == nil then
-		self.sprites = sprite
-	else
+	if self.sprites ~= nil then
 		local pointer = self.sprites
-		while pointer:getNext() do
+		while pointer:getNext() ~= nil do
 			pointer = pointer:getNext()
 		end
 		pointer:setNext(sprite)
+	else
+		self.sprites = sprite
 	end
 end
 
@@ -58,7 +54,7 @@ function Board:addKing(x, y, color)
 	king:setBoard(self)
 	self.pieces[x][y] = king
 	local newSprite = self:newSprite(king, x, y)
-	self.addSprite(king, x, y)
+	self:addSprite(newSprite, x, y)
 end
 
 function Board:addQueen(x, y, color)
@@ -66,7 +62,7 @@ function Board:addQueen(x, y, color)
 	queen:setBoard(self)
 	self.pieces[x][y] = queen
 	local newSprite = self:newSprite(queen, x, y)
-	self.addSprite(newSprite, x, y)
+	self:addSprite(newSprite, x, y)
 end
 
 function Board:addRook(x, y, color)
@@ -74,7 +70,7 @@ function Board:addRook(x, y, color)
 	rook:setBoard(self)
 	self.pieces[x][y] = rook
 	local newSprite = self:newSprite(rook, x, y)
-	self.addSprite(newSprite, x, y)
+	self:addSprite(newSprite, x, y)
 end
 
 function Board:addKnight(x, y, color)
@@ -82,7 +78,7 @@ function Board:addKnight(x, y, color)
 	knight:setBoard(self)
 	self.pieces[x][y] = knight
 	local newSprite = self:newSprite(knight, x, y)
-	self.addSprite(newSprite, x, y)
+	self:addSprite(newSprite, x, y)
 end
 
 function Board:addBishop(x, y, color)
@@ -90,7 +86,7 @@ function Board:addBishop(x, y, color)
 	bishop:setBoard(self)
 	self.pieces[x][y] = bishop
 	local newSprite = self:newSprite(bishop, x, y)
-	self.addSprite(newSprite, x, y)
+	self:addSprite(newSprite, x, y)
 end
 
 function Board:addPawn(x, y, color)
@@ -98,7 +94,7 @@ function Board:addPawn(x, y, color)
 	pawn:setBoard(self)
 	self.pieces[x][y] = pawn
 	local newSprite = self:newSprite(pawn, x, y)
-	self.addSprite(newSprite, x, y)
+	self:addSprite(newSprite, x, y)
 end
 
 function Board:loadNewGame()
@@ -169,10 +165,18 @@ function Board:removeSprite(sprite)
 	pointer:setNext(next)
 end
 
+function Board:isKing(piece)
+	local type = getmetatable(piece)
+	if type == King then
+		return true
+	end
+	return false
+end
+
 function Board:movePiece(x1, y1, x2, y2)
 	-- if king captured set checkmate
 	local piece = self.pieces[x2][y2]
-	if piece ~= nil and piece:getType() == "king" then
+	if piece ~= nil and self:isKing(piece) then
 		self.checkMate = true
 	end
 	-- change switch pieces in matrix

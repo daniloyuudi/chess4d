@@ -18,7 +18,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x+i, y) then
 				table.insert(moves, {x+i, y})
 			end
-			if self:hasPiece("any", x+i, y) then
+			if self.board:hasPiece("any", x+i, y) then
 				break
 			end
 		end
@@ -27,7 +27,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x+i, y-i) then
 				table.insert(moves, {x+i, y-i})
 			end
-			if self:hasPiece("any", x+i, y-i) then
+			if self.board:hasPiece("any", x+i, y-i) then
 				break
 			end
 		end
@@ -36,7 +36,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x, y-i) then
 				table.insert(moves, {x, y-i})
 			end
-			if self:hasPiece("any", x, y-i) then
+			if self.board:hasPiece("any", x, y-i) then
 				break
 			end
 		end
@@ -45,7 +45,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x-i, y-i) then
 				table.insert(moves, {x-i, y-i})
 			end
-			if self:hasPiece("any", x-i, y-i) then
+			if self.board:hasPiece("any", x-i, y-i) then
 				break
 			end
 		end
@@ -54,7 +54,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x-i, y) then
 				table.insert(moves, {x-i, y})
 			end
-			if self:hasPiece("any", x-i, y) then
+			if self.board:hasPiece("any", x-i, y) then
 				break
 			end
 		end
@@ -63,7 +63,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x-i, y+i) then
 				table.insert(moves, {x-i, y+i})
 			end
-			if self:hasPiece("any", x-i, y+i) then
+			if self.board:hasPiece("any", x-i, y+i) then
 				break
 			end
 		end
@@ -72,7 +72,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x, y+i) then
 				table.insert(moves, {x, y+i})
 			end
-			if self:hasPiece("any", x, y+i) then
+			if self.board:hasPiece("any", x, y+i) then
 				break
 			end
 		end
@@ -81,7 +81,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("white", x+i, y+i) then
 				table.insert(moves, {x+i, y+i})
 			end
-			if self:hasPiece("any", x+i, y+i) then
+			if self.board:hasPiece("any", x+i, y+i) then
 				break
 			end
 		end
@@ -91,7 +91,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x+i, y) then
 				table.insert(moves, {x+i, y})
 			end
-			if self:hasPiece("any", x+i, y) then
+			if self.board:hasPiece("any", x+i, y) then
 				break
 			end
 		end
@@ -100,7 +100,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x+i, y-i) then
 				table.insert(moves, {x+i, y-i})
 			end
-			if self:hasPiece("any", x+i, y-i) then
+			if self.board:hasPiece("any", x+i, y-i) then
 				break
 			end
 		end
@@ -109,7 +109,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x, y-i) then
 				table.insert(moves, {x, y-i})
 			end
-			if self:hasPiece("any", x, y-i) then
+			if self.board:hasPiece("any", x, y-i) then
 				break
 			end
 		end
@@ -118,7 +118,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x-i, y-i) then
 				table.insert(moves, {x-i, y-i})
 			end
-			if self:hasPiece("any", x-i, y-i) then
+			if self.board:hasPiece("any", x-i, y-i) then
 				break
 			end
 		end
@@ -127,7 +127,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x-i, y) then
 				table.insert(moves, {x-i, y})
 			end
-			if self:hasPiece("any", x-i, y) then
+			if self.board:hasPiece("any", x-i, y) then
 				break
 			end
 		end
@@ -136,7 +136,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x-i, y+i) then
 				table.insert(moves, {x-i, y+i})
 			end
-			if self:hasPiece("any", x-i, y+i) then
+			if self.board:hasPiece("any", x-i, y+i) then
 				break
 			end
 		end
@@ -145,7 +145,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x, y+i) then
 				table.insert(moves, {x, y+i})
 			end
-			if self:hasPiece("any", x, y+i) then
+			if self.board:hasPiece("any", x, y+i) then
 				break
 			end
 		end
@@ -154,7 +154,7 @@ function Queen:getMoves(x, y)
 			if not self.board:hasPiece("black", x+i, y+i) then
 				table.insert(moves, {x+i, y+i})
 			end
-			if self:hasPiece("any", x+i, y+i) then
+			if self.board:hasPiece("any", x+i, y+i) then
 				break
 			end
 		end

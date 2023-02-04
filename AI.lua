@@ -1,5 +1,9 @@
-local Piece = require("Piece")
-local Moves = require("Moves")
+local Pawn = require("Pawn")
+local Rook = require("Rook")
+local Knight = require("Knight")
+local Bishop = require("Bishop")
+local Queen = require("Queen")
+local King = require("King")
 
 local AI = {}
 
@@ -7,26 +11,25 @@ function AI:new()
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
-	o.moves = Moves:new()
 	return o
 end
 
-function AI:getPossibleMoves(x, y, piece)
-	local type = piece:getType()
-	if type == "pawn" then
-		return self.moves:getPawnMoves(x, y, "black")
-	elseif type == "rook" then
-		return self.moves:getRookMoves(x, y, "black")
-	elseif type == "knight" then
-		return self.moves:getKnightMoves(x, y, "black")
-	elseif type == "bishop" then
-		return self.moves:getBishopMoves(x, y, "black")
-	elseif type == "queen" then
-		return self.moves:getQueenMoves(x, y, "black")
-	elseif type == "king" then
-		return self.moves:getKingMoves(x, y, "black")
+function AI:copyPiece(piece)
+	local type = getmetatable(piece)
+	local color = piece:getColor()
+	if type == Pawn then
+		return Pawn:new(color)
+	elseif type == Rook then
+		return Rook:new(color)
+	elseif type == Knight then
+		return Knight:new(color)
+	elseif type == Bishop then
+		return Bishop:new(color)
+	elseif type == Queen then
+		return Queen:new(color)
+	elseif type == King then
+		return King:new(color)
 	end
-	return {}
 end
 
 function AI:copyMatrix(matrix)
@@ -38,7 +41,7 @@ function AI:copyMatrix(matrix)
 		for j = 1, 8 do
 			local piece = matrix[i][j]
 			if piece ~= nil then
-				local newPiece = Piece:new(piece:getColor(), piece:getType())
+				local newPiece = self:copyPiece(piece)
 				newMatrix[i][j] = newPiece
 			end
 		end
@@ -58,7 +61,7 @@ function AI:getBoards(currentBoard)
 		for j = 1, 8 do
 			local piece = currentBoard[i][j]
 			if piece ~= nil and piece:getColor() == "black" then
-				local moves = self:getPossibleMoves(i, j, piece)
+				local moves = piece:getMoves(i, j)
 				if next(moves) then
 					for _, v in ipairs(moves) do
 						local newBoard = self:copyMatrix(currentBoard)
@@ -75,7 +78,6 @@ end
 
 function AI:setBoardMatrix(matrix)
 	self.boardMatrix = matrix
-	self.moves:setBoardMatrix(matrix)
 end
 
 function AI:selectRandomMove(array)
@@ -84,47 +86,13 @@ function AI:selectRandomMove(array)
 	return array[randomNumber]
 end
 
-function AI:getPieceValue(piece)
-	local type = piece:getType()
-	local color = piece:getColor()
-	if color == "black" then
-		if type == "pawn" then
-			return 10
-		elseif type == "knight" then
-			return 30
-		elseif type == "bishop" then
-			return 30
-		elseif type == "rook" then
-			return 50
-		elseif type == "queen" then
-			return 90
-		elseif type == "king" then
-			return 900
-		end
-	elseif color == "white" then
-		if type == "pawn" then
-			return -10
-		elseif type == "knight" then
-			return -30
-		elseif type == "bishop" then
-			return -30
-		elseif type == "rook" then
-			return -50
-		elseif type == "queen" then
-			return -90
-		elseif type == "king" then
-			return -900
-		end
-	end
-end
-
 function AI:evaluateBoard(matrix)
 	local value = 0
 	for i = 1, 8 do
 		for j = 1, 8 do
 			local piece = matrix[i][j]
 			if piece ~= nil then
-				value = value + self:getPieceValue(piece)
+				value = value + piece:getValue()
 			end
 		end
 	end

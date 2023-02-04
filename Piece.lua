@@ -8,7 +8,7 @@ function Piece:new(color)
 	return o
 end
 
-function Board:setBoard(board)
+function Piece:setBoard(board)
 	self.board = board
 end
 
