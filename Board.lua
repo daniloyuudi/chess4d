@@ -157,12 +157,16 @@ function Board:searchSprite(x, y)
 end
 
 function Board:removeSprite(sprite)
-	local pointer = self.sprites
-	while pointer:getNext() ~= sprite do
-		pointer = pointer:getNext()
+	if self.sprites == sprite then
+		self.sprites = self.sprites:getNext()
+	else
+		local pointer = self.sprites
+		while pointer:getNext() ~= sprite do
+			pointer = pointer:getNext()
+		end
+		local next = pointer:getNext():getNext()
+		pointer:setNext(next)
 	end
-	local next = pointer:getNext():getNext()
-	pointer:setNext(next)
 end
 
 function Board:isKing(piece)
