@@ -14,24 +14,6 @@ function AI:new()
 	return o
 end
 
-function AI:copyPiece(piece)
-	local type = getmetatable(piece)
-	local color = piece:getColor()
-	if type == Pawn then
-		return Pawn:new(color)
-	elseif type == Rook then
-		return Rook:new(color)
-	elseif type == Knight then
-		return Knight:new(color)
-	elseif type == Bishop then
-		return Bishop:new(color)
-	elseif type == Queen then
-		return Queen:new(color)
-	elseif type == King then
-		return King:new(color)
-	end
-end
-
 function AI:copyMatrix(matrix)
 	local newMatrix = {}
 	for i = 1, 8 do
@@ -41,7 +23,7 @@ function AI:copyMatrix(matrix)
 		for j = 1, 8 do
 			local piece = matrix[i][j]
 			if piece ~= nil then
-				local newPiece = self:copyPiece(piece)
+				local newPiece = piece:clone()
 				newMatrix[i][j] = newPiece
 			end
 		end

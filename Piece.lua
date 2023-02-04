@@ -8,6 +8,19 @@ function Piece:new(color)
 	return o
 end
 
+function Piece:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	return o
+end
+
+function Piece:clone()
+	return self:copyPrototype(self)
+end
+
 function Piece:setBoard(board)
 	self.board = board
 end
