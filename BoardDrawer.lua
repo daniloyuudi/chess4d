@@ -5,7 +5,6 @@ function BoardDrawer:new(board)
 	setmetatable(o, self)
 	self.__index = self
 	o.board = board
-	o.quadColor = "white"
 	return o
 end
 
