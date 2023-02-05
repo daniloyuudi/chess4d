@@ -64,6 +64,7 @@ function Match:update()
 					if self.board:hasPiece("white", quadX, quadY) then
 						self.selected = true
 						self.selectedX, self.selectedY = quadX, quadY
+						self.boardDrawer:setSelectedQuad(quadX, quadY)
 					end
 				else
 					local quadX, quadY = self:getClickedQuad()
@@ -77,6 +78,7 @@ function Match:update()
 						self.movingPiece = true
 					end
 					self.selected = false
+					self.boardDrawer:setSelectedQuad(nil, nil)
 				end
 			end
 		end

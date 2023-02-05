@@ -9,25 +9,40 @@ function BoardDrawer:new(board)
 	return o
 end
 
-function BoardDrawer:alternateColor()
-	if self.quadColor == "white" then
-		self.quadColor = "black"
-		love.graphics.setColor(0.5, 0.5, 0.5, 1)
-	elseif self.quadColor == "black" then
-		self.quadColor = "white"
-		love.graphics.setColor(1, 1, 1, 1)
+function BoardDrawer:setQuadColor(x, y)
+	if x == self.selectedX and y == self.selectedY then
+		love.graphics.setColor(1, 0, 0, 1)
+	else
+		local color = "white"
+		if x % 2 == 1 then
+			color = "black"
+		end
+		if y % 2 == 1 then
+			if color == "white" then
+				color = "black"
+			elseif color == "black" then
+				color = "white"
+			end
+		end
+		if color == "white" then
+			love.graphics.setColor(1, 1, 1, 1)
+		elseif color == "black" then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
 	end
 end
 
 function BoardDrawer:drawBoard()
 	for i=1, 8 do
 		for j=1, 8 do
+			self:setQuadColor(i, j)
 			love.graphics.rectangle("fill", 75*(i-1), 75*(j-1), 75, 75)
-			if j ~= 8 then
-				self:alternateColor()
-			end
 		end
 	end
+end
+
+function BoardDrawer:setSelectedQuad(x, y)
+	self.selectedX, self.selectedY = x, y
 end
 
 function BoardDrawer:drawPieces()
