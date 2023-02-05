@@ -12,20 +12,11 @@ function BoardDrawer:setQuadColor(x, y)
 	if x == self.selectedX and y == self.selectedY then
 		love.graphics.setColor(1, 0, 0, 1)
 	else
-		local color = "white"
-		if x % 2 == 1 then
-			color = "black"
-		end
-		if y % 2 == 1 then
-			if color == "white" then
-				color = "black"
-			elseif color == "black" then
-				color = "white"
-			end
-		end
-		if color == "white" then
+		-- calculate if the quad is odd or even
+		local modulus = math.abs(x % 2 - y % 2)
+		if modulus == 0 then
 			love.graphics.setColor(1, 1, 1, 1)
-		elseif color == "black" then
+		elseif modulus == 1 then
 			love.graphics.setColor(0.5, 0.5, 0.5, 1)
 		end
 	end
