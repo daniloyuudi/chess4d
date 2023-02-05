@@ -9,6 +9,14 @@ function PieceSprite:new()
 	return o
 end
 
+function PieceSprite:super(x, y)
+	self.x, self.y = (x-1)*75, (y-1)*75
+	self.originX, self.originY = 0, 0
+	self.destinationX, self.destinationY = 0, 0
+	self.state = "still"
+	self.animationStep = 0
+end
+
 function PieceSprite:setNext(pieceSprite)
 	self.next = pieceSprite
 end
