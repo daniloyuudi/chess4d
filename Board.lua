@@ -4,7 +4,6 @@ local Rook = require("Rook")
 local Knight = require("Knight")
 local Bishop = require("Bishop")
 local Pawn = require("Pawn")
-local EventManager = require("EventManager")
 
 local Board = {}
 
@@ -19,42 +18,36 @@ function Board:addKing(x, y, color)
 	local king = King:new(color)
 	king:setBoard(self)
 	self.pieces[x][y] = king
-	self.eventManager:dispatch('created_king', {x=x, y=y})
 end
 
 function Board:addQueen(x, y, color)
 	local queen = Queen:new(color)
 	queen:setBoard(self)
 	self.pieces[x][y] = queen
-	self.eventManager:dispatch('created_queen', {x=x, y=y})
 end
 
 function Board:addRook(x, y, color)
 	local rook = Rook:new(color)
 	rook:setBoard(self)
 	self.pieces[x][y] = rook
-	self.eventManager:dispatch('created_rook', {x=x, y=y})
 end
 
 function Board:addKnight(x, y, color)
 	local knight = Knight:new(color)
 	knight:setBoard(self)
 	self.pieces[x][y] = knight
-	self.eventManager:dispatch('created_knight', {x=x, y=y})
 end
 
 function Board:addBishop(x, y, color)
 	local bishop = Bishop:new(color)
 	bishop:setBoard(self)
 	self.pieces[x][y] = bishop
-	self.eventManager:dispatch('created_bishop', {x=x, y=y})
 end
 
 function Board:addPawn(x, y, color)
 	local pawn = Pawn:new(color)
 	pawn:setBoard(self)
 	self.pieces[x][y] = pawn
-	self.eventManager:dispatch('created_pawn', {x=x, y=y})
 end
 
 function Board:loadNewGame()
@@ -88,7 +81,6 @@ function Board:new()
 	self.__index = self
 	o:loadMatrix()
 	o:loadNewGame()
-	o.eventManager = EventManager:new()
 	o.checkMate = false
 	return o
 end
@@ -127,8 +119,6 @@ function Board:movePiece(x1, y1, x2, y2)
 	-- change switch pieces in matrix
 	self.pieces[x2][y2] = self.pieces[x1][y1]
 	self.pieces[x1][y1] = nil
-	-- dispatch sprite event
-	self.eventManager:dispatch("moved_piece", {x1=x1, y1=y1, x2=x2, y2=y2})
 end
 
 function Board:hasMove(moves, x, y)

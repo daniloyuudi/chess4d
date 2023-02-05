@@ -69,12 +69,16 @@ function Match:update()
 				else
 					local quadX, quadY = self:getClickedQuad()
 					if self.board:checkMove(self.selectedX, self.selectedY, quadX, quadY) then
+						if self.board:hasPiece("black", quadX, quadY) then
+							self.boardDrawer:removeSprite(quadX, quadY)
+						end
 						self.board:movePiece(self.selectedX, self.selectedY, quadX, quadY)
 						if self.board:gameEnded() then
 							self.gameEnded = true
 						end
 						self.turn = "black"
-						self.currentSprite = self.board:getPieceSprite(self.selectedX, self.selectedY)
+						self.currentSprite = self.boardDrawer:getSprite(self.selectedX, self.selectedY)
+						self.currentSprite:setDestination(quadX, quadY)
 						self.movingPiece = true
 					end
 					self.selected = false
@@ -93,12 +97,16 @@ function Match:update()
 			local currentBoard = self.board:getMatrix()
 			self.ai:setBoardMatrix(currentBoard)
 			local originX, originY, destinationX, destinationY = self.ai:getNextMove()
+			if self.board:hasPiece("white", destinationX, destinationY) then
+				self.boardDrawer:removeSprite(destinationX, destinationY)
+			end
 			self.board:movePiece(originX, originY, destinationX, destinationY)
 			if self.board:gameEnded() then
 				self.gameEnded = true
 			end
 			self.turn = "white"
-			self.currentSprite = self.board:getPieceSprite(originX, originY)
+			self.currentSprite = self.boardDrawer:getSprite(originX, originY)
+			self.currentSprite:setDestination(destinationX, destinationY)
 			self.movingPiece = true
 		end
 	end

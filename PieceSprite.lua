@@ -35,7 +35,7 @@ end
 
 function PieceSprite:setDestination(x, y)
 	self.originX, self.originY = self.x, self.y
-	self.destinationX, self.destinationY = x, y
+	self.destinationX, self.destinationY = (x-1)*75, (y-1)*75
 	self.state = "moving"
 	self.animationStep = 0
 end
