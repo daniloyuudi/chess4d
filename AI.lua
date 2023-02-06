@@ -5,7 +5,9 @@ local Bishop = require("Bishop")
 local Queen = require("Queen")
 local King = require("King")
 
-local AI = {}
+local AI = {
+	DEPTH = 3
+}
 
 function AI:new()
 	local o = {}
@@ -36,8 +38,30 @@ function AI:movePiece(matrix, x1, y1, x2, y2)
 	matrix[x1][y1] = nil
 end
 
-function AI:getBoards(currentBoard)
-	-- get possible moves from a board recursively
+function AI:getBoardsWhite(currentBoard)
+	-- get possible moves from a board
+	local boards = {}
+	for i = 1, 8 do
+		for j = 1, 8 do
+			local piece = currentBoard[i][j]
+			if piece ~= nil and piece:getColor() == "white" then
+				local moves = piece:getMoves(i, j)
+				if next(moves) then
+					for _, v in ipairs(moves) do
+						local newBoard = self:copyMatrix(currentBoard)
+						local destinationX, destinationY = v[1], v[2]
+						self:movePiece(newBoard, i, j, destinationX, destinationY)
+						table.insert(boards, newBoard) -- add new move to array
+					end
+				end
+			end
+		end
+	end
+	return boards
+end
+
+function AI:getBoardsBlack(currentBoard)
+	-- get possible moves from a board
 	local boards = {}
 	for i = 1, 8 do
 		for j = 1, 8 do
@@ -58,14 +82,77 @@ function AI:getBoards(currentBoard)
 	return boards
 end
 
-function AI:setBoardMatrix(matrix)
-	self.boardMatrix = matrix
+function AI:getChildren(currentNode, level)
+	local boards = self:getBoardsBlack(currentNode.board)
+	if (AI.DEPTH - level) % 2 == 1 then
+		boards = self:getBoardsWhite(currentNode.board)
+	end
+	currentNode.children = {}
+	for _, board in ipairs(boards) do
+		local childNode = {}
+		childNode.board = board
+		table.insert(currentNode.children, childNode)
+	end
+	if level-1 > 0 then
+		for _, child in ipairs(currentNode.children) do
+			self:getChildren(child, level-1)
+		end
+	end
 end
 
-function AI:selectRandomMove(array)
-	local arraySize = table.getn(array)
-	local randomNumber = math.random(arraySize)
-	return array[randomNumber]
+function AI:newTree(currentBoard, depth)
+	-- get tree from current board with given depth
+	self.tree = {}
+	self.tree.board = currentBoard
+	if depth > 0 then
+		self:getChildren(self.tree, depth)
+	end
+end
+
+function AI:evaluateNode(node, turn)
+	if node.children ~= nil then
+		if turn == "max" then
+			local max = self:evaluateNode(node.children[1], "min")
+			for i = 2, table.getn(node.children) do
+				local value = self:evaluateNode(node.children[i], "min")
+				if value > max then
+					max = value
+				end
+			end
+			return max
+		elseif turn == "min" then
+			local min = self:evaluateNode(node.children[1], "max")
+			for i = 2, table.getn(node.children) do
+				local value = self:evaluateNode(node.children[i], "max")
+				if value < min then
+					min = value
+				end
+			end
+			return min
+		end
+	else
+		return self:evaluateBoard(node.board)
+	end
+end
+
+function AI:getMaxValueNode(tree)
+	local max = self:evaluateNode(tree.children[1], "min")
+	local index = 1
+	print("begin evaluation")
+	print(max)
+	for i = 2, table.getn(tree.children) do
+		local value = self:evaluateNode(tree.children[i], "min")
+		print(value)
+		if value > max then
+			max = value
+			index = i
+		end
+	end
+	return index
+end
+
+function AI:setBoardMatrix(matrix)
+	self.boardMatrix = matrix
 end
 
 function AI:evaluateBoard(matrix)
@@ -79,31 +166,6 @@ function AI:evaluateBoard(matrix)
 		end
 	end
 	return value
-end
-
-function AI:selectBestMove(array)
-	-- check first if can capture any piece
-	local firstValue = self:evaluateBoard(array[1])
-	for i = 2, table.getn(array) do
-		local board = array[i]
-		local value = self:evaluateBoard(board)
-		if value > firstValue then
-			-- algorithm to capture a piece
-			local highestValue = -1000000
-			local selectedIndex = nil
-			-- select strongest board in array
-			for i, v in ipairs(array) do
-				local value = self:evaluateBoard(v)
-				if value > highestValue then
-					highestValue = value
-					selectedIndex = i
-				end
-			end
-			return array[selectedIndex]
-		end
-	end
-	-- all moves are the same so do random move
-	return AI:selectRandomMove(array)
 end
 
 function AI:getMatrixDiff(matrix1, matrix2)
@@ -126,12 +188,19 @@ function AI:getMatrixDiff(matrix1, matrix2)
 	return originX, originY, destinationX, destinationY
 end
 
-function AI:getNextMove()
-	local moveArray = self:getBoards(self.boardMatrix)
-	local selectedBoard = self:selectBestMove(moveArray)
-	local originX, originY, destinationX, destinationY =
-		self:getMatrixDiff(self.boardMatrix, selectedBoard)
-	return originX, originY, destinationX, destinationY
+function AI:getMoveFromChildNode(index)
+	local rootBoard = self.tree.board
+	local targetChildNode = self.tree.children[index]
+	local targetBoard = targetChildNode.board
+	return self:getMatrixDiff(rootBoard, targetBoard)
+end
+
+function AI:getNextMoveMiniMax()
+	-- generate tree
+	self:newTree(self.boardMatrix, AI.DEPTH)
+	-- explore tree for best move
+	local index = self:getMaxValueNode(self.tree)
+	return self:getMoveFromChildNode(index)
 end
 
 return AI

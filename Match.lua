@@ -96,7 +96,7 @@ function Match:update()
 			end
 			local currentBoard = self.board:getMatrix()
 			self.ai:setBoardMatrix(currentBoard)
-			local originX, originY, destinationX, destinationY = self.ai:getNextMove()
+			local originX, originY, destinationX, destinationY = self.ai:getNextMoveMiniMax()
 			if self.board:hasPiece("white", destinationX, destinationY) then
 				self.boardDrawer:removeSprite(destinationX, destinationY)
 			end
