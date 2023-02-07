@@ -138,12 +138,9 @@ end
 function AI:getMaxValueNode(tree)
 	local max = self:evaluateNode(tree.children[1], "min")
 	local index = 1
-	print("begin evaluation")
-	print(max)
 	for i = 2, table.getn(tree.children) do
 		local value = self:evaluateNode(tree.children[i], "min")
-		print(value)
-		if value > max then
+		if value >= max then
 			max = value
 			index = i
 		end
