@@ -6,20 +6,22 @@ function Pawn:getMoves(x, y)
 	local moves = {}
 	if self.color == "white" then
 		-- capture left
-		if x > 1 then
+		if x > 1 and y > 1 then
 			if self.board:hasPiece("black", x-1, y-1) then
 				table.insert(moves, {x-1, y-1})
 			end
 		end
 		-- capture right
-		if x < 8 then
+		if x < 8 and y > 1 then
 			if self.board:hasPiece("black", x+1, y-1) then
 				table.insert(moves, {x+1, y-1})
 			end
 		end
 		-- move forward
-		if not self.board:hasPiece("any", x, y-1) then
-			table.insert(moves, {x, y-1})
+		if y > 1 then
+			if not self.board:hasPiece("any", x, y-1) then
+				table.insert(moves, {x, y-1})
+			end
 		end
 		-- opening move
 		if y == 7 then
@@ -29,20 +31,22 @@ function Pawn:getMoves(x, y)
 		end
 	elseif self.color == "black" then
 		-- capture left
-		if x > 1 then
+		if x > 1 and y < 8 then
 			if self.board:hasPiece("white", x-1, y+1) then
 				table.insert(moves, {x-1, y+1})
 			end
 		end
 		-- capture right
-		if x < 8 then
+		if x < 8 and y < 8 then
 			if self.board:hasPiece("white", x+1, y+1) then
 				table.insert(moves, {x+1, y+1})
 			end
 		end
 		-- move forward
-		if not self.board:hasPiece("any", x, y+1) then
-			table.insert(moves, {x, y+1})
+		if y < 8 then
+			if not self.board:hasPiece("any", x, y+1) then
+				table.insert(moves, {x, y+1})
+			end
 		end
 		-- opening move
 		if y == 2 then
