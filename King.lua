@@ -53,7 +53,7 @@ function King:getMoves(x, y)
 				table.insert(moves, {x-1, y+1})
 			end
 		end
-	elseif color == "black" then
+	elseif self.color == "black" then
 		-- move left
 		if x > 1 then
 			if not self.board:hasPiece("black", x-1, y) then
