@@ -6,7 +6,7 @@ local Queen = require("Queen")
 local King = require("King")
 
 local AI = {
-	DEPTH = 3
+	DEPTH = 2
 }
 
 function AI:new()
@@ -20,8 +20,6 @@ function AI:copyMatrix(matrix)
 	local newMatrix = {}
 	for i = 1, 8 do
 		newMatrix[i] = {}
-	end
-	for i = 1, 8 do
 		for j = 1, 8 do
 			local piece = matrix[i][j]
 			if piece ~= nil then
@@ -44,7 +42,7 @@ function AI:newNode(data)
 	return node
 end
 
-function AI:getMaximizeLevel(node, level)
+function AI:getBlackMoves(node, level)
 	node.children = {}
 	for i = 1, 8 do
 		for j = 1, 8 do
@@ -65,12 +63,12 @@ function AI:getMaximizeLevel(node, level)
 	end
 	if level-1 > 0 then
 		for _, child in ipairs(node.children) do
-			self:getMinimizeLevel(child, level-1)
+			self:getWhiteMoves(child, level-1)
 		end
 	end
 end
 
-function AI:getMinimizeLevel(node, level)
+function AI:getWhiteMoves(node, level)
 	node.children = {}
 	for i = 1, 8 do
 		for j = 1, 8 do
@@ -91,7 +89,7 @@ function AI:getMinimizeLevel(node, level)
 	end
 	if level-1 > 0 then
 		for _, child in ipairs(node.children) do
-			self:getMaximizeLevel(child, level-1)
+			self:getBlackMoves(child, level-1)
 		end
 	end
 end
@@ -99,7 +97,7 @@ end
 function AI:generateTree()
 	-- get tree from current board with given depth
 	self.tree = self:newNode(self.boardMatrix)
-	self:getMaximizeLevel(self.tree, self.DEPTH)
+	self:getBlackMoves(self.tree, self.DEPTH)
 end
 
 function AI:maximize(node)
@@ -137,11 +135,13 @@ function AI:maximizeFirst()
 	local index = nil
 	for key, child in ipairs(self.tree.children) do
 		local value = self:minimize(child)
+		print(key.."=", value)
 		if value > max then
 			max = value
 			index = key
 		end
 	end
+	print("selected=", index)
 	return index
 end
 
@@ -156,7 +156,7 @@ function AI:setBoardMatrix(matrix)
 	self.boardMatrix = matrix
 end
 
-function AI:getUtility(matrix)
+function AI:getBoardValue(matrix)
 	local value = 0
 	for i = 1, 8 do
 		for j = 1, 8 do
@@ -167,6 +167,13 @@ function AI:getUtility(matrix)
 		end
 	end
 	return value
+end
+
+function AI:getUtility(matrix)
+	local originalValue = self:getBoardValue(self.tree.data)
+	local finalValue = self:getBoardValue(matrix)
+	return finalValue - originalValue
+	--return self:getBoardValue(matrix)
 end
 
 function AI:getMatrixDiff(matrix1, matrix2)
