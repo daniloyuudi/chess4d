@@ -17,8 +17,17 @@ function Piece:copyPrototype(prototype)
 	return o
 end
 
-function Piece:clone()
-	return self:copyPrototype(self)
+function Piece:hasPiece(color, x, y)
+	local piece = self.board[x][y]
+	if piece ~= nil then
+		if color == "any" then
+			return true
+		end
+		if piece:getColor() == color then
+			return true
+		end
+	end
+	return false
 end
 
 function Piece:setBoard(board)

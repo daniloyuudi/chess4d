@@ -2,6 +2,10 @@ local Piece = require("Piece")
 
 local Bishop = Piece:new()
 
+function Bishop:clone()
+	return Bishop:copyPrototype(self)
+end
+
 function Bishop:getMoves(x, y)
 	local quadsLeft = x-1
 	local quadsRight = 8-x
@@ -15,74 +19,74 @@ function Bishop:getMoves(x, y)
 	if self.color == "white" then
 		-- move left-up
 		for i = 1, quadsLeftUp do
-			if not self.board:hasPiece("white", x-i, y-i) then
+			if not self:hasPiece("white", x-i, y-i) then
 				table.insert(moves, {x-i, y-i})
 			end
-			if self.board:hasPiece("any", x-i, y-i) then
+			if self:hasPiece("any", x-i, y-i) then
 				break
 			end
 		end
 		-- move right-up
 		for i = 1, quadsRightUp do
-			if not self.board:hasPiece("white", x+i, y-i) then
+			if not self:hasPiece("white", x+i, y-i) then
 				table.insert(moves, {x+i, y-i})
 			end
-			if self.board:hasPiece("any", x+i, y-i) then
+			if self:hasPiece("any", x+i, y-i) then
 				break
 			end
 		end
 		-- move right-down
 		for i = 1, quadsRightDown do
-			if not self.board:hasPiece("white", x+i, y+i) then
+			if not self:hasPiece("white", x+i, y+i) then
 				table.insert(moves, {x+i, y+i})
 			end
-			if self.board:hasPiece("any", x+i, y+i) then
+			if self:hasPiece("any", x+i, y+i) then
 				break
 			end
 		end
 		-- move left-down
 		for i = 1, quadsLeftDown do
-			if not self.board:hasPiece("white", x-i, y+i) then
+			if not self:hasPiece("white", x-i, y+i) then
 				table.insert(moves, {x-i, y+i})
 			end
-			if self.board:hasPiece("any", x-i, y+i) then
+			if self:hasPiece("any", x-i, y+i) then
 				break
 			end
 		end
 	elseif self.color == "black" then
 		-- move left-up
 		for i = 1, quadsLeftUp do
-			if not self.board:hasPiece("black", x-i, y-i) then
+			if not self:hasPiece("black", x-i, y-i) then
 				table.insert(moves, {x-i, y-i})
 			end
-			if self.board:hasPiece("any", x-i, y-i) then
+			if self:hasPiece("any", x-i, y-i) then
 				break
 			end
 		end
 		-- move right-up
 		for i = 1, quadsRightUp do
-			if not self.board:hasPiece("black", x+i, y-i) then
+			if not self:hasPiece("black", x+i, y-i) then
 				table.insert(moves, {x+i, y-i})
 			end
-			if self.board:hasPiece("any", x+i, y-i) then
+			if self:hasPiece("any", x+i, y-i) then
 				break
 			end
 		end
 		-- move right-down
 		for i = 1, quadsRightDown do
-			if not self.board:hasPiece("black", x+i, y+i) then
+			if not self:hasPiece("black", x+i, y+i) then
 				table.insert(moves, {x+i, y+i})
 			end
-			if self.board:hasPiece("any", x+i, y+i) then
+			if self:hasPiece("any", x+i, y+i) then
 				break
 			end
 		end
 		-- move left-down
 		for i = 1, quadsLeftDown do
-			if not self.board:hasPiece("black", x-i, y+i) then
+			if not self:hasPiece("black", x-i, y+i) then
 				table.insert(moves, {x-i, y+i})
 			end
-			if self.board:hasPiece("any", x-i, y+i) then
+			if self:hasPiece("any", x-i, y+i) then
 				break
 			end
 		end

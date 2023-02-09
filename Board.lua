@@ -16,37 +16,37 @@ end
 
 function Board:addKing(x, y, color)
 	local king = King:new(color)
-	king:setBoard(self)
+	king:setBoard(self.pieces)
 	self.pieces[x][y] = king
 end
 
 function Board:addQueen(x, y, color)
 	local queen = Queen:new(color)
-	queen:setBoard(self)
+	queen:setBoard(self.pieces)
 	self.pieces[x][y] = queen
 end
 
 function Board:addRook(x, y, color)
 	local rook = Rook:new(color)
-	rook:setBoard(self)
+	rook:setBoard(self.pieces)
 	self.pieces[x][y] = rook
 end
 
 function Board:addKnight(x, y, color)
 	local knight = Knight:new(color)
-	knight:setBoard(self)
+	knight:setBoard(self.pieces)
 	self.pieces[x][y] = knight
 end
 
 function Board:addBishop(x, y, color)
 	local bishop = Bishop:new(color)
-	bishop:setBoard(self)
+	bishop:setBoard(self.pieces)
 	self.pieces[x][y] = bishop
 end
 
 function Board:addPawn(x, y, color)
 	local pawn = Pawn:new(color)
-	pawn:setBoard(self)
+	pawn:setBoard(self.pieces)
 	self.pieces[x][y] = pawn
 end
 

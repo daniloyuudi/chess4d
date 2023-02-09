@@ -24,6 +24,7 @@ function AI:copyMatrix(matrix)
 			local piece = matrix[i][j]
 			if piece ~= nil then
 				local newPiece = piece:clone()
+				newPiece:setBoard(newMatrix)
 				newMatrix[i][j] = newPiece
 			end
 		end
@@ -68,6 +69,20 @@ function AI:getBlackMoves(node, level)
 	end
 end
 
+function AI:maxDepth(node)
+	-- calculate max depth of the tree for debug
+	if node.children == nil then
+		return 0
+	else
+		local max = -math.huge
+		for _, child in ipairs(node.children) do
+			local depth = self:maxDepth(child)
+			max = math.max(depth, max)
+		end
+		return max + 1
+	end
+end
+
 function AI:getWhiteMoves(node, level)
 	node.children = {}
 	for i = 1, 8 do
@@ -100,6 +115,22 @@ function AI:generateTree()
 	self:getBlackMoves(self.tree, self.DEPTH)
 end
 
+function AI:printColorsTree(node)
+	for i = 1, 8 do
+		for j = 1, 8 do
+			local piece = node.data[i][j]
+			if piece ~= nil then
+				print(piece:getColor())
+			end
+		end
+	end
+	if node.children ~= nil then
+		for _, v in ipairs(node.children) do
+			self:printColorsTree(v)
+		end
+	end
+end
+
 function AI:maximize(node)
 	if node.children ~= nil then
 		local max = -math.huge
@@ -115,11 +146,32 @@ function AI:maximize(node)
 	end
 end
 
+function AI:getMatrixDiff2(matrix1, matrix2)
+	local originX, originY
+	local destinationX, destinationY
+	for i = 1, 8 do
+		for j = 1, 8 do
+			local piece1 = matrix1[i][j]
+			local piece2 = matrix2[i][j]
+			if piece1 ~= nil and piece1:getColor() == "white"
+				and piece2 == nil then
+				originX, originY = i, j
+			end
+			if (piece1 == nil or piece1 ~= nil and piece1:getColor() == "black")
+				and piece2 ~= nil and piece2:getColor() == "white" then
+				destinationX, destinationY = i, j
+			end
+		end
+	end
+	return originX, originY, destinationX, destinationY
+end
+
 function AI:minimize(node)
 	if node.children ~= nil then
 		local min = math.huge
 		for _, child in ipairs(node.children) do
 			local value = self:maximize(child)
+			child.__value = value
 			if value < min then
 				min = value
 			end
@@ -130,23 +182,33 @@ function AI:minimize(node)
 	end
 end
 
+function AI:printMinimizeLevel(node)
+	print("==minimize level==")
+	--[[for i, child in ipairs(node.children) do
+		print(i.."=", child.__value)
+	end]]
+	for i, child in ipairs(node.children) do
+		print(i.."=", self:getMatrixDiff2(node.data, child.data))
+	end
+end
+
 function AI:maximizeFirst()
 	local max = -math.huge
 	local index = nil
 	for key, child in ipairs(self.tree.children) do
 		local value = self:minimize(child)
-		print(key.."=", value)
 		if value > max then
 			max = value
 			index = key
 		end
 	end
-	print("selected=", index)
+	--self:printMinimizeLevel(self.tree.children[index])
 	return index
 end
 
 function AI:getNextMoveMiniMax()
 	self:generateTree()
+	print("max depth=", self:maxDepth(self.tree))
 	local index = self:maximizeFirst()
 	local selectedNode = self.tree.children[index].data
 	return self:getMatrixDiff(self.tree.data, selectedNode)
@@ -169,10 +231,34 @@ function AI:getBoardValue(matrix)
 	return value
 end
 
+function AI:printMatrix(matrix)
+	for i = 1, 8 do
+		for j = 1, 8 do
+			local piece = matrix[j][i]
+			if piece ~= nil then
+				if getmetatable(piece) == Pawn then
+					io.write("P")
+				elseif getmetatable(piece) == Rook then
+					io.write("R")
+				elseif getmetatable(piece) == Knight then
+					io.write("N")
+				elseif getmetatable(piece) == Bishop then
+					io.write("B")
+				elseif getmetatable(piece) == Queen then
+					io.write("Q")
+				elseif getmetatable(piece) == King then
+					io.write("K")
+				end
+				io.write("\n")
+			end
+		end
+	end
+end
+
 function AI:getUtility(matrix)
 	local originalValue = self:getBoardValue(self.tree.data)
 	local finalValue = self:getBoardValue(matrix)
-	return finalValue - originalValue
+	return finalValue
 	--return self:getBoardValue(matrix)
 end
 
