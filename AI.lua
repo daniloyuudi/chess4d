@@ -6,7 +6,7 @@ local Queen = require("Queen")
 local King = require("King")
 
 local AI = {
-	DEPTH = 2
+	DEPTH = 3
 }
 
 function AI:new()
@@ -131,13 +131,17 @@ function AI:printColorsTree(node)
 	end
 end
 
-function AI:maximize(node)
+function AI:maximize(node, alpha, beta)
 	if node.children ~= nil then
 		local max = -math.huge
 		for _, child in ipairs(node.children) do
 			local value = self:minimize(child)
 			if value > max then
 				max = value
+			end
+			alpha = math.max(alpha, max)
+			if beta <= alpha then
+				break
 			end
 		end
 		return max
@@ -166,14 +170,18 @@ function AI:getMatrixDiff2(matrix1, matrix2)
 	return originX, originY, destinationX, destinationY
 end
 
-function AI:minimize(node)
+function AI:minimize(node, alpha, beta)
 	if node.children ~= nil then
 		local min = math.huge
 		for _, child in ipairs(node.children) do
-			local value = self:maximize(child)
+			local value = self:maximize(child, alpha, beta)
 			child.__value = value
 			if value < min then
 				min = value
+			end
+			beta = math.min(beta, min)
+			if beta <= alpha then
+				break
 			end
 		end
 		return min
@@ -192,14 +200,18 @@ function AI:printMinimizeLevel(node)
 	end
 end
 
-function AI:maximizeFirst()
+function AI:maximizeFirst(alpha, beta)
 	local max = -math.huge
 	local index = nil
 	for key, child in ipairs(self.tree.children) do
-		local value = self:minimize(child)
+		local value = self:minimize(child, alpha, beta)
 		if value > max then
 			max = value
 			index = key
+		end
+		alpha = math.max(alpha, max)
+		if beta <= alpha then
+			break
 		end
 	end
 	--self:printMinimizeLevel(self.tree.children[index])
@@ -209,7 +221,7 @@ end
 function AI:getNextMoveMiniMax()
 	self:generateTree()
 	print("max depth=", self:maxDepth(self.tree))
-	local index = self:maximizeFirst()
+	local index = self:maximizeFirst(-math.huge, math.huge)
 	local selectedNode = self.tree.children[index].data
 	return self:getMatrixDiff(self.tree.data, selectedNode)
 end
