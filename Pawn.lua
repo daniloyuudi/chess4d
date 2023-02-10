@@ -2,8 +2,38 @@ local Piece = require("Piece")
 
 local Pawn = Piece:new()
 
+Pawn.evaluationWhite = {
+	{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+	{5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
+	{1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
+	{0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
+	{0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+	{0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5},
+	{0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5},
+	{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+}
+
+function Pawn:new(color)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = color
+	o.evaluationBlack = self:reverseArray(self.evaluationWhite)
+	return o
+end
+
+function Pawn:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	o.evaluationBlack = prototype.evaluationBlack
+	return o
+end
+
 function Pawn:clone()
-	return Pawn:copyPrototype(self)
+	return self:copyPrototype(self)
 end
 
 function Pawn:getMoves(x, y)
@@ -62,11 +92,11 @@ function Pawn:getMoves(x, y)
 	return moves
 end
 
-function Pawn:getValue()
+function Pawn:getValue(x, y)
 	if self.color == "black" then
-		return 10
+		return 10 + self.evaluationBlack[y][x]
 	elseif self.color == "white" then
-		return -10
+		return -(10 + self.evaluationWhite[y][x])
 	end
 end
 

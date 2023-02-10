@@ -2,8 +2,36 @@ local Piece = require("Piece")
 
 local Queen = Piece:new()
 
+Queen.evaluation = {
+	{-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0},
+	{-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+	{-1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0},
+	{-0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5},
+	{0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5},
+	{-1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0},
+	{-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0},
+	{-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0}
+}
+
+function Queen:new(color)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = color
+	return o
+end
+
+function Queen:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	return o
+end
+
 function Queen:clone()
-	return Queen:copyPrototype(self)
+	return self:copyPrototype(self)
 end
 
 function Queen:getMoves(x, y)
@@ -166,11 +194,11 @@ function Queen:getMoves(x, y)
 	return moves
 end
 
-function Queen:getValue()
+function Queen:getValue(x, y)
 	if self.color == "black" then
-		return 90
+		return 90 + self.evaluation[y][x]
 	elseif self.color == "white" then
-		return -90
+		return -(90 + self.evaluation[y][x])
 	end
 end
 

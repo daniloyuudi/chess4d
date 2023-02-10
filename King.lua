@@ -2,6 +2,36 @@ local Piece = require("Piece")
 
 local King = Piece:new()
 
+King.evaluationWhite = {
+	{-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+	{-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+	{-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+	{-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+	{-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0},
+	{-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0},
+	{2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0},
+	{2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0}
+}
+
+function King:new(color)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = color
+	o.evaluationBlack = self:reverseArray(self.evaluationWhite)
+	return o
+end
+
+function King:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	o.evaluationBlack = prototype.evaluationBlack
+	return o
+end
+
 function King:clone()
 	return King:copyPrototype(self)
 end
@@ -110,11 +140,11 @@ function King:getMoves(x, y)
 	return moves
 end
 
-function King:getValue()
+function King:getValue(x, y)
 	if self.color == "black" then
-		return 900
+		return 900 + self.evaluationBlack[y][x]
 	elseif self.color == "white" then
-		return -900
+		return -(900 + self.evaluationWhite[y][x])
 	end
 end
 

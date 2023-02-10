@@ -169,7 +169,7 @@ function AI:getBoardValue(matrix)
 		for j = 1, 8 do
 			local piece = matrix[i][j]
 			if piece ~= nil then
-				value = value + piece:getValue()
+				value = value + piece:getValue(i, j)
 			end
 		end
 	end

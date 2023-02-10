@@ -2,8 +2,38 @@ local Piece = require("Piece")
 
 local Bishop = Piece:new()
 
+Bishop.evaluationWhite = {
+	{-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0},
+	{-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+	{-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0},
+	{-1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0},
+	{-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0},
+	{-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0},
+	{-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0},
+	{-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0}
+}
+
+function Bishop:new(color)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = color
+	o.evaluationBlack = self:reverseArray(self.evaluationWhite)
+	return o
+end
+
+function Bishop:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	o.evaluationBlack = prototype.evaluationBlack
+	return o
+end
+
 function Bishop:clone()
-	return Bishop:copyPrototype(self)
+	return self:copyPrototype(self)
 end
 
 function Bishop:getMoves(x, y)
@@ -94,11 +124,11 @@ function Bishop:getMoves(x, y)
 	return moves
 end
 
-function Bishop:getValue()
+function Bishop:getValue(x, y)
 	if self.color == "black" then
-		return 30
+		return 30 + self.evaluationBlack[y][x]
 	elseif self.color == "white" then
-		return -30
+		return -(30 + self.evaluationWhite[y][x])
 	end
 end
 

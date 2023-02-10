@@ -2,8 +2,36 @@ local Piece = require("Piece")
 
 local Knight = Piece:new()
 
+Knight.evaluation = {
+	{-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0},
+	{-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0},
+	{-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0},
+	{-3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0},
+	{-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0},
+	{-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0},
+	{-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0},
+	{-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0}
+}
+
+function Knight:new(color)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = color
+	return o
+end
+
+function Knight:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	return o
+end
+
 function Knight:clone()
-	return Knight:copyPrototype(self)
+	return self:copyPrototype(self)
 end
 
 function Knight:getMoves(x, y)
@@ -110,11 +138,11 @@ function Knight:getMoves(x, y)
 	return moves
 end
 
-function Knight:getValue()
+function Knight:getValue(x, y)
 	if self.color == "black" then
-		return 30
+		return 30 + self.evaluation[y][x]
 	elseif self.color == "white" then
-		return -30
+		return -(30 + self.evaluation[y][x])
 	end
 end
 

@@ -2,8 +2,38 @@ local Piece = require("Piece")
 
 local Rook = Piece:new()
 
+Rook.evaluationWhite = {
+	{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+	{0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+	{-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+	{-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+	{-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+	{-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+	{-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+	{0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0}
+}
+
+function Rook:new(color)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = color
+	o.evaluationBlack = self:reverseArray(self.evaluationWhite)
+	return o
+end
+
+function Rook:copyPrototype(prototype)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	o.color = prototype.color
+	o.board = prototype.board
+	o.evaluationBlack = prototype.evaluationBlack
+	return o
+end
+
 function Rook:clone()
-	return Rook:copyPrototype(self)
+	return self:copyPrototype(self)
 end
 
 function Rook:getMoves(x, y)
@@ -90,11 +120,11 @@ function Rook:getMoves(x, y)
 	return moves
 end
 
-function Rook:getValue()
+function Rook:getValue(x, y)
 	if self.color == "black" then
-		return 50
+		return 50 + self.evaluationBlack[y][x]
 	elseif self.color == "white" then
-		return -50
+		return -(50 + self.evaluationWhite[y][x])
 	end
 end
 
