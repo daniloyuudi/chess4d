@@ -8,7 +8,7 @@ package.cpath = "./?.dll"
 local minimax = require("minimax")
 
 local AI = {
-	DEPTH = 2
+	DEPTH = 4
 }
 
 function AI:new()
@@ -169,18 +169,28 @@ function AI:generateMatrixForCModule(matrix)
 			local piece = matrix[i][j]
 			if piece == nil then
 				cMatrix[i][j] = 0
-				break
+			else
+				cMatrix[i][j] = piece:getModuleIndex()
 			end
-			cMatrix[i][j] = piece:getModuleIndex()
 		end
 	end
 	return cMatrix
 end
 
+--[[function printBoard(matrix)
+	for i = 1, 8 do
+		io.write("\n")
+		for j = 1, 8 do
+			io.write(matrix[i][j])
+			io.write(" ")
+		end
+	end
+end]]
+
 function AI:getNextMoveMiniMax()
 	local newMatrix = self:generateMatrixForCModule(self.boardMatrix)
+	--printBoard(newMatrix)
 	local originX, originY, destinationX, destinationY = minimax.getNextMove(newMatrix, self.DEPTH)
-	print(originX, originY, destinationX, destinationY)
 	return originX, originY, destinationX, destinationY
 end
 
