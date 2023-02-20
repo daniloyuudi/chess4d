@@ -1,5 +1,5 @@
 # CHESS 4D
-O Chess 4D é um jogo de xadrez feito em Lua. O jogo possui uma IA que implementa o algoritmo Minimax com alpha-beta pruning para a avaliação da melhor jogada possível.
+O Chess 4D é um jogo de xadrez feito em Lua / C. O jogo possui uma IA que implementa o algoritmo Minimax com alpha-beta pruning para a avaliação da melhor jogada possível.
 
 ## Instalação
 Para usar o Chess 4D você precisa primeiro do módulo em C para Minimax que pode ser encontrado nesse repositório: https://github.com/daniloyuudi/chess4d-minimax. O Chess 4D usa o módulo Minimax para aumentar a performance do algoritmo de IA. O jogo procura pelo módulo (.dll ou .so) na raiz do projeto. Para rodar o jogo é necessário o framework Love2d.
