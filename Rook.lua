@@ -128,4 +128,12 @@ function Rook:getValue(x, y)
 	end
 end
 
+function Rook:getModuleIndex()
+	if self.color == "white" then
+		return 3
+	elseif self.color == "black" then
+		return 4
+	end
+end
+
 return Rook

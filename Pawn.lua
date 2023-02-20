@@ -100,4 +100,12 @@ function Pawn:getValue(x, y)
 	end
 end
 
+function Pawn:getModuleIndex()
+	if self.color == "white" then
+		return 1
+	elseif self.color == "black" then
+		return 2
+	end
+end
+
 return Pawn

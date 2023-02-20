@@ -132,4 +132,12 @@ function Bishop:getValue(x, y)
 	end
 end
 
+function Bishop:getModuleIndex()
+	if self.color == "white" then
+		return 7
+	elseif self.color == "black" then
+		return 8
+	end
+end
+
 return Bishop

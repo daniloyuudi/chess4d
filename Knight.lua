@@ -146,4 +146,12 @@ function Knight:getValue(x, y)
 	end
 end
 
+function Knight:getModuleIndex()
+	if self.color == "white" then
+		return 5
+	elseif self.color == "black" then
+		return 6
+	end
+end
+
 return Knight

@@ -202,4 +202,12 @@ function Queen:getValue(x, y)
 	end
 end
 
+function Queen:getModuleIndex()
+	if self.color == "white" then
+		return 9
+	elseif self.color == "black" then
+		return 10
+	end
+end
+
 return Queen

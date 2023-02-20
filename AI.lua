@@ -4,9 +4,11 @@ local Knight = require("Knight")
 local Bishop = require("Bishop")
 local Queen = require("Queen")
 local King = require("King")
+package.cpath = "./?.dll"
+local minimax = require("minimax")
 
 local AI = {
-	DEPTH = 3
+	DEPTH = 2
 }
 
 function AI:new()
@@ -152,11 +154,34 @@ function AI:maximizeFirst(alpha, beta)
 	return index
 end
 
-function AI:getNextMoveMiniMax()
+--[[function AI:getNextMoveMiniMax()
 	self:generateTree()
 	local index = self:maximizeFirst(-math.huge, math.huge)
 	local selectedNode = self.tree.children[index].data
 	return self:getMatrixDiff(self.tree.data, selectedNode)
+end]]
+
+function AI:generateMatrixForCModule(matrix)
+	local cMatrix = {}
+	for i = 1, 8 do
+		cMatrix[i] = {}
+		for j = 1, 8 do
+			local piece = matrix[i][j]
+			if piece == nil then
+				cMatrix[i][j] = 0
+				break
+			end
+			cMatrix[i][j] = piece:getModuleIndex()
+		end
+	end
+	return cMatrix
+end
+
+function AI:getNextMoveMiniMax()
+	local newMatrix = self:generateMatrixForCModule(self.boardMatrix)
+	local originX, originY, destinationX, destinationY = minimax.getNextMove(newMatrix, self.DEPTH)
+	print(originX, originY, destinationX, destinationY)
+	return originX, originY, destinationX, destinationY
 end
 
 function AI:setBoardMatrix(matrix)

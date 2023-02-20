@@ -148,4 +148,12 @@ function King:getValue(x, y)
 	end
 end
 
+function King:getModuleIndex()
+	if self.color == "white" then
+		return 11
+	elseif self.color == "black" then
+		return 12
+	end
+end
+
 return King
